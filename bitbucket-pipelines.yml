@@ -1,0 +1,102 @@
+#  Template .NET Core build
+
+#  This template allows you to validate your .NET Core package.
+#  The workflow allows running tests and code linting on the default branch.
+
+# To run your pipeline on a Windows machine, create a self-hosted Windows runner.
+# For instructions on setting up a Windows runner, see https://support.atlassian.com/bitbucket-cloud/docs/set-up-runners-for-windows/
+
+image: mcr.microsoft.com/dotnet/sdk:6.0
+
+definitions:
+  steps:
+    - step: &sonar-step
+        name: SonarQube analysis
+        caches:
+          - dotnetcore
+          - sonar
+        script:
+        - apt-get update
+        - apt-get install --yes openjdk-17-jre
+        - apt-get install -y curl
+        - curl -sL https://deb.nodesource.com/setup_16.x | bash -
+        - apt-get install --yes nodejs
+        - dotnet tool install --global dotnet-sonarscanner
+        - dotnet tool install --global dotnet-reportgenerator-globaltool
+        - export PATH="$PATH:/root/.dotnet/tools"
+        - cd Sources/
+        - dotnet restore SF-Minecraft-Blazor.sln
+        - dotnet sonarscanner begin /k:"SF-Minecraft-Blazor" /d:"sonar.login=${SONAR_TOKEN}"  /d:"sonar.host.url=${SONAR_HOST_URL}" /d:"sonar.coverageReportPaths=./coveragereport/SonarQube.xml" /d:"sonar.coverage.exclusions=Tests/**"
+        - dotnet build --no-restore --configuration Release
+        - dotnet test SF-Minecraft-Blazor.sln --logger trx --no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=./SF-Minecraft-Blazor/TestResults/coverage/ --collect "XPlat Code Coverage"
+        - |
+          if ! test -f "./TestResults/coverage/coverage.cobertura.xml"; then 
+            echo "No test coverage report found. Setting coverage to 0%."
+            mkdir -p "./SF-Minecraft-Blazor/TestResults/coverage"
+            echo "<coverage version=\"1\"><file path=\".\"><lineToCover lineNumber=\"1\" covered=\"false\" /></file></coverage>" > ./SF-Minecraft-Blazor/TestResults/coverage/coverage.cobertura.xml 
+          fi
+        - reportgenerator -reports:"./SF-Minecraft-Blazor/TestResults/coverage/coverage.cobertura.xml" -reporttypes:SonarQube -targetdir:"./SF-Minecraft-Blazor/coveragereport";
+        - dotnet publish SF-Minecraft-Blazor.sln --no-restore --configuration Release -o CI_PROJECT_DIR/build/release
+        - dotnet sonarscanner end /d:"sonar.login=${SONAR_TOKEN}"
+
+    - step: &github-mirror-step
+        name: Sync GitHub Mirror
+        image: alpine/git:latest
+        clone:
+          enabled: false
+        script:
+          - git clone --bare git@bitbucket.org:samuel-sirven-etu/sf-minecraft-blazor.git
+          - cd sf-minecraft-blazor.git
+          - git push --mirror git@github.com:iShoFen/SF-Minecraft-Blazor.git
+
+    - step: &gitea-mirror-step
+        name: Sync Gitea Mirror
+        image: alpine/git:latest
+        clone:
+          enabled: false
+        script:
+          - git clone --bare git@bitbucket.org:samuel-sirven-etu/sf-minecraft-blazor.git
+          - cd sf-minecraft-blazor.git
+          - git push --mirror git@codefirst.iut.uca.fr:samuel.sirven/SF-Minecraft-Blazor.git
+
+          
+    - step: &build-step
+        name: Build
+        caches:
+          - dotnetcore
+        script:
+          - REPORTS_PATH=./test-reports/build_${BITBUCKET_BUILD_NUMBER}
+          - cd Sources/
+          - dotnet restore SF-Minecraft-Blazor.sln
+          - dotnet build --no-restore --configuration Release
+          - dotnet publish SF-Minecraft-Blazor.sln --no-restore --configuration Release -o CI_PROJECT_DIR/build/release
+
+    - step: &test-step
+        name: Test
+        caches:
+          - dotnetcore
+        script:
+          - cd Sources/
+          - dotnet restore SF-Minecraft-Blazor.sln
+          - dotnet test --no-restore --configuration Release
+  caches:
+    sonar: ~/.sonar
+
+pipelines:
+  default:
+    - parallel:
+      - step: *github-mirror-step
+      - step: *gitea-mirror-step
+
+    - step: *build-step
+    - step: *test-step
+        
+  branches:
+    '{master,develop}':
+      - parallel:
+        - step: *github-mirror-step
+        - step: *gitea-mirror-step
+  
+      - step: *build-step
+      - step: *test-step
+      - step: *sonar-step
