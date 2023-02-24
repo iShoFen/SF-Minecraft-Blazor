@@ -9,135 +9,129 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using RestController.Models;
 
-namespace RestController.Controllers
+namespace RestController.Controllers;
+
+/// <summary>
+/// The inventory controller.
+/// </summary>
+[ApiController]
+[Route("api/[controller]")]
+public class InventoryController : ControllerBase
 {
+    private const string InventoryPath = "Data/inventory.json";
+    private const string InventoryNotFoundMessage = "Unable to get the inventory.";
+    private const string ItemNotFoundMessage = "Unable to found the item with id: {0} at position: {1}";
+    
     /// <summary>
-    /// The inventory controller.
+    /// The json serializer options.
     /// </summary>
-    [ApiController]
-    [Route("api/[controller]")]
-    public class InventoryController : ControllerBase
+    private readonly JsonSerializerOptions _jsonSerializerOptions = new()
     {
-        /// <summary>
-        /// The json serializer options.
-        /// </summary>
-        private readonly JsonSerializerOptions _jsonSerializerOptions = new()
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        WriteIndented = true,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault
+    };
+
+    /// <summary>
+    /// Adds to inventory.
+    /// </summary>
+    /// <param name="item">The item.</param>
+    /// <returns>The async task.</returns>
+    [HttpPost]
+    [Route("")]
+    public Task AddToInventory(InventoryModel item)
+    {
+        var data = JsonSerializer.Deserialize<List<InventoryModel>>(System.IO.File.ReadAllText(InventoryPath), _jsonSerializerOptions);
+
+        if (data == null)
         {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            WriteIndented = true,
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault
-        };
-
-        /// <summary>
-        /// Adds to inventory.
-        /// </summary>
-        /// <param name="item">The item.</param>
-        /// <returns>The async task.</returns>
-        [HttpPost]
-        [Route("")]
-        public Task AddToInventory(InventoryModel item)
-        {
-            var data = JsonSerializer.Deserialize<List<InventoryModel>>(System.IO.File.ReadAllText("Data/inventory.json"), _jsonSerializerOptions);
-
-            if (data == null)
-            {
-                throw new Exception("Unable to get the inventory.");
-            }
-
-            data.Add(item);
-
-            System.IO.File.WriteAllText("Data/inventory.json", JsonSerializer.Serialize(data, _jsonSerializerOptions));
-
-            return Task.CompletedTask;
+            throw new FileNotFoundException(InventoryNotFoundMessage);
         }
 
-        /// <summary>
-        /// Deletes from inventory.
-        /// </summary>
-        /// <param name="item">The item.</param>
-        /// <returns>The async task.</returns>
-        [HttpDelete]
-        [Route("")]
-        public Task DeleteFromInventory(InventoryModel item)
+        data.Add(item);
+
+        System.IO.File.WriteAllText(InventoryPath, JsonSerializer.Serialize(data, _jsonSerializerOptions));
+
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Deletes from inventory.
+    /// </summary>
+    /// <param name="item">The item.</param>
+    /// <returns>The async task.</returns>
+    [HttpDelete]
+    [Route("")]
+    public Task DeleteFromInventory(InventoryModel item)
+    {
+        var data = JsonSerializer.Deserialize<List<InventoryModel>>(System.IO.File.ReadAllText(InventoryPath), _jsonSerializerOptions);
+
+        if (data == null)
         {
-            if (!System.IO.File.Exists("Data/inventory.json"))
-            {
-                throw new Exception($"Unable to found the item with name: {item.ItemName}");
-            }
-
-            var data = JsonSerializer.Deserialize<List<InventoryModel>>(System.IO.File.ReadAllText("Data/inventory.json"), _jsonSerializerOptions);
-
-            if (data == null)
-            {
-                throw new Exception("Unable to get the inventory.");
-            }
-
-            var inventoryItem = data.FirstOrDefault(w => w.ItemName == item.ItemName && w.Position == item.Position);
-
-            if (inventoryItem == null)
-            {
-                throw new Exception($"Unable to found the item with name: {item.ItemName} at position: {item.Position}");
-            }
-
-            data.Remove(inventoryItem);
-
-            System.IO.File.WriteAllText("Data/inventory.json", JsonSerializer.Serialize(data, _jsonSerializerOptions));
-
-            return Task.CompletedTask;
+            throw new FileNotFoundException(InventoryNotFoundMessage);
         }
 
-        /// <summary>
-        /// Gets the inventory.
-        /// </summary>
-        /// <returns>The inventory.</returns>
-        [HttpGet]
-        [Route("")]
-        public Task<List<InventoryModel>> GetInventory()
+        var inventoryItem = data.FirstOrDefault(w => w.ItemId == item.ItemId && w.Position == item.Position);
+
+        if (inventoryItem == null)
         {
-            if (!System.IO.File.Exists("Data/inventory.json"))
-            {
-                return Task.FromResult(new List<InventoryModel>());
-            }
-
-            var data = JsonSerializer.Deserialize<List<InventoryModel>>(System.IO.File.ReadAllText("Data/inventory.json"), _jsonSerializerOptions);
-
-            if (data == null)
-            {
-                throw new Exception("Unable to get the inventory.");
-            }
-
-            return Task.FromResult(data);
+            throw new ArgumentException(string.Format(ItemNotFoundMessage, item.ItemId, item.Position));
         }
 
-        /// <summary>
-        /// Updates the inventory.
-        /// </summary>
-        /// <param name="item">The item.</param>
-        /// <returns>The async task.</returns>
-        [HttpPut]
-        [Route("")]
-        public Task UpdateInventory(InventoryModel item)
+        data.Remove(inventoryItem);
+
+        System.IO.File.WriteAllText(InventoryPath, JsonSerializer.Serialize(data, _jsonSerializerOptions));
+
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Gets the inventory.
+    /// </summary>
+    /// <returns>The inventory.</returns>
+    [HttpGet]
+    [Route("")]
+    public Task<List<InventoryModel>> GetInventory()
+    {
+        if (!System.IO.File.Exists(InventoryPath))
         {
-            var data = JsonSerializer.Deserialize<List<InventoryModel>>(System.IO.File.ReadAllText("Data/inventory.json"), _jsonSerializerOptions);
-
-            if (data == null)
-            {
-                throw new Exception("Unable to get the inventory.");
-            }
-
-            var inventoryItem = data.FirstOrDefault(w => w.ItemName == item.ItemName && w.Position == item.Position);
-
-            if (inventoryItem == null)
-            {
-                throw new Exception($"Unable to found the item with name: {item.ItemName} at position: {item.Position}");
-            }
-
-            inventoryItem.ItemName = item.ItemName;
-            inventoryItem.Position = item.Position;
-
-            System.IO.File.WriteAllText("Data/inventory.json", JsonSerializer.Serialize(data, _jsonSerializerOptions));
-
-            return Task.CompletedTask;
+            System.IO.File.Create(InventoryPath).Close();
+            return Task.FromResult(new List<InventoryModel>());
         }
+
+        var data = JsonSerializer.Deserialize<List<InventoryModel>>(System.IO.File.ReadAllText(InventoryPath), _jsonSerializerOptions);
+            
+        return Task.FromResult(data!);
+    }
+
+    /// <summary>
+    /// Updates the inventory.
+    /// </summary>
+    /// <param name="item">The item.</param>
+    /// <returns>The async task.</returns>
+    [HttpPut]
+    [Route("")]
+    public Task UpdateInventory(InventoryModel item)
+    {
+        var data = JsonSerializer.Deserialize<List<InventoryModel>>(System.IO.File.ReadAllText(InventoryPath), _jsonSerializerOptions);
+
+        if (data == null)
+        {
+            throw new FileNotFoundException(InventoryNotFoundMessage);
+        }
+
+        var inventoryItem = data.FirstOrDefault(w => w.ItemId == item.ItemId && w.Position == item.Position);
+
+        if (inventoryItem == null)
+        {
+            throw new ArgumentException(string.Format(ItemNotFoundMessage, item.ItemId, item.Position));
+        }
+
+        inventoryItem.ItemId = item.ItemId;
+        inventoryItem.Position = item.Position;
+
+        System.IO.File.WriteAllText(InventoryPath, JsonSerializer.Serialize(data, _jsonSerializerOptions));
+
+        return Task.CompletedTask;
     }
 }

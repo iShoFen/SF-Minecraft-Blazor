@@ -14,7 +14,7 @@ namespace RestController.Models
         /// <summary>
         /// Gets or sets the name of the item.
         /// </summary>
-        public string ItemName { get; set; }
+        public int ItemId { get; set; }
 
         /// <summary>
         /// Gets or sets the number item.
