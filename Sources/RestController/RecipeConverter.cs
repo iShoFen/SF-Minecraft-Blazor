@@ -21,7 +21,7 @@ public readonly struct IngredientElement
 
 public readonly struct InShape
 {
-    public IngredientClass IngredientClass { get; init; }
+    public IngredientClass? IngredientClass { get; init; }
     public long? Integer { get; init; }
 
     public bool IsNull => IngredientClass == null && Integer == null;
@@ -53,7 +53,7 @@ public partial class Recipes
     public IngredientElement[] Ingredients { get; set; } = Array.Empty<IngredientElement>();
 
     [JsonProperty("inShape", NullValueHandling = NullValueHandling.Ignore)]
-    public InShape[][] InShape { get; set; } = Array.Empty<InShape[]>();
+    public InShape[][]? InShape { get; set; } 
 
     [JsonProperty("outShape", NullValueHandling = NullValueHandling.Ignore)]
     public long?[][] OutShape { get; set; } = Array.Empty<long?[]>();
