@@ -2,175 +2,184 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace RestController
+namespace RestController;
+
+using JsonConverter = JsonConverter;
+using JsonSerializer = JsonSerializer;
+
+public readonly struct IngredientElement
 {
-    using JsonConverter = Newtonsoft.Json.JsonConverter;
-    using JsonSerializer = Newtonsoft.Json.JsonSerializer;
+    public IngredientClass IngredientClass { get; init; }
+    public long? Integer { get; init; }
 
-    public struct IngredientElement
+    public static implicit operator IngredientElement(IngredientClass ingredientClass) => new()
+        { IngredientClass = ingredientClass };
+
+    public static implicit operator IngredientElement(long integer) => new()
+        { Integer = integer };
+}
+
+public readonly struct InShape
+{
+    public IngredientClass IngredientClass { get; init; }
+    public long? Integer { get; init; }
+
+    public bool IsNull => IngredientClass == null && Integer == null;
+
+    public static implicit operator InShape(IngredientClass ingredientClass) => new()
+        { IngredientClass = ingredientClass };
+
+    public static implicit operator InShape(long integer) => new()
+        { Integer = integer };
+}
+
+public static class Serialize
+{
+    public static string ToJson(this Dictionary<string, Recipes[]> self) => JsonConvert.SerializeObject(self, Converter.Settings);
+}
+
+public class IngredientClass
+{
+    [JsonProperty("id")]
+    public long Id { get; set; }
+
+    [JsonProperty("metadata")]
+    public long Metadata { get; set; }
+}
+
+public partial class Recipes
+{
+    [JsonProperty("ingredients", NullValueHandling = NullValueHandling.Ignore)]
+    public IngredientElement[] Ingredients { get; set; } = Array.Empty<IngredientElement>();
+
+    [JsonProperty("inShape", NullValueHandling = NullValueHandling.Ignore)]
+    public InShape[][] InShape { get; set; } = Array.Empty<InShape[]>();
+
+    [JsonProperty("outShape", NullValueHandling = NullValueHandling.Ignore)]
+    public long?[][] OutShape { get; set; } = Array.Empty<long?[]>();
+
+    [JsonProperty("result")]
+    public Result Result { get; set; } = new();
+}
+
+public partial class Recipes
+{
+    public static Dictionary<string, Recipes[]> FromJson(string json)
+        => JsonConvert.DeserializeObject<Dictionary<string, Recipes[]>>(json, Converter.Settings) ?? new();
+}
+
+public class Result
+{
+    [JsonProperty("count")]
+    public long Count { get; set; }
+
+    [JsonProperty("id")]
+    public long Id { get; set; }
+
+    [JsonProperty("metadata")]
+    public long Metadata { get; set; }
+}
+
+internal static class Converter
+{
+    public static readonly JsonSerializerSettings Settings = new()
     {
-        public IngredientClass IngredientClass;
-        public long? Integer;
-
-        public static implicit operator IngredientElement(IngredientClass IngredientClass) => new IngredientElement { IngredientClass = IngredientClass };
-
-        public static implicit operator IngredientElement(long Integer) => new IngredientElement { Integer = Integer };
-    }
-
-    public struct InShape
-    {
-        public IngredientClass IngredientClass;
-        public long? Integer;
-
-        public bool IsNull => IngredientClass == null && Integer == null;
-
-        public static implicit operator InShape(IngredientClass IngredientClass) => new InShape { IngredientClass = IngredientClass };
-
-        public static implicit operator InShape(long Integer) => new InShape { Integer = Integer };
-    }
-
-    public static class Serialize
-    {
-        public static string ToJson(this Dictionary<string, Recipes[]> self) => JsonConvert.SerializeObject(self, Converter.Settings);
-    }
-
-    public class IngredientClass
-    {
-        [JsonProperty("id")]
-        public long Id { get; set; }
-
-        [JsonProperty("metadata")]
-        public long Metadata { get; set; }
-    }
-
-    public partial class Recipes
-    {
-        [JsonProperty("ingredients", NullValueHandling = NullValueHandling.Ignore)]
-        public IngredientElement[] Ingredients { get; set; }
-
-        [JsonProperty("inShape", NullValueHandling = NullValueHandling.Ignore)]
-        public InShape[][] InShape { get; set; }
-
-        [JsonProperty("outShape", NullValueHandling = NullValueHandling.Ignore)]
-        public long?[][] OutShape { get; set; }
-
-        [JsonProperty("result")]
-        public Result Result { get; set; }
-    }
-
-    public partial class Recipes
-    {
-        public static Dictionary<string, Recipes[]> FromJson(string json) => JsonConvert.DeserializeObject<Dictionary<string, Recipes[]>>(json, Converter.Settings);
-    }
-
-    public class Result
-    {
-        [JsonProperty("count")]
-        public long Count { get; set; }
-
-        [JsonProperty("id")]
-        public long Id { get; set; }
-
-        [JsonProperty("metadata")]
-        public long Metadata { get; set; }
-    }
-
-    internal static class Converter
-    {
-        public static readonly JsonSerializerSettings Settings = new JsonSerializerSettings
+        MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
+        DateParseHandling = DateParseHandling.None,
+        Converters =
         {
-            MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
-            DateParseHandling = DateParseHandling.None,
-            Converters =
-            {
-                InShapeConverter.Singleton,
-                IngredientElementConverter.Singleton,
-                new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.AssumeUniversal }
-            },
-        };
-    }
+            InShapeConverter.Singleton,
+            IngredientElementConverter.Singleton,
+            new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.AssumeUniversal }
+        },
+    };
+}
 
-    internal class IngredientElementConverter : JsonConverter
+internal class IngredientElementConverter : JsonConverter
+{
+    private const string IngredientArgumentExceptionMessage = "Cannot unmarshal type IngredientElement";
+    
+    public static readonly IngredientElementConverter Singleton = new();
+
+    public override bool CanConvert(Type objectType) => objectType == typeof(IngredientElement) || objectType == typeof(IngredientElement?);
+
+    public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
     {
-        public static readonly IngredientElementConverter Singleton = new IngredientElementConverter();
-
-        public override bool CanConvert(Type t) => t == typeof(IngredientElement) || t == typeof(IngredientElement?);
-
-        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        switch (reader.TokenType)
         {
-            switch (reader.TokenType)
-            {
-                case JsonToken.Integer:
-                    var integerValue = serializer.Deserialize<long>(reader);
-                    return new IngredientElement { Integer = integerValue };
+            case JsonToken.Integer:
+                var integerValue = serializer.Deserialize<long>(reader);
+                return new IngredientElement { Integer = integerValue };
 
-                case JsonToken.StartObject:
-                    var objectValue = serializer.Deserialize<IngredientClass>(reader);
-                    return new IngredientElement { IngredientClass = objectValue };
-            }
-            throw new Exception("Cannot unmarshal type IngredientElement");
-        }
-
-        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
-        {
-            var value = (IngredientElement)untypedValue;
-            if (value.Integer != null)
-            {
-                serializer.Serialize(writer, value.Integer.Value);
-                return;
-            }
-            if (value.IngredientClass != null)
-            {
-                serializer.Serialize(writer, value.IngredientClass);
-                return;
-            }
-            throw new Exception("Cannot marshal type IngredientElement");
+            case JsonToken.StartObject:
+                var objectValue = serializer.Deserialize<IngredientClass>(reader) ?? throw new ArgumentException(IngredientArgumentExceptionMessage);
+                return new IngredientElement { IngredientClass = objectValue };
+            default:
+                throw new ArgumentException(IngredientArgumentExceptionMessage);
         }
     }
 
-    internal class InShapeConverter : JsonConverter
+    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
     {
-        public static readonly InShapeConverter Singleton = new InShapeConverter();
-
-        public override bool CanConvert(Type t) => t == typeof(InShape) || t == typeof(InShape?);
-
-        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        if (value is not IngredientElement ingredient) throw new ArgumentException("Value cannot be null or not IngredientElement");
+        
+        if (ingredient.Integer != null)
         {
-            switch (reader.TokenType)
-            {
-                case JsonToken.Null:
-                    return new InShape { };
-
-                case JsonToken.Integer:
-                    var integerValue = serializer.Deserialize<long>(reader);
-                    return new InShape { Integer = integerValue };
-
-                case JsonToken.StartObject:
-                    var objectValue = serializer.Deserialize<IngredientClass>(reader);
-                    return new InShape { IngredientClass = objectValue };
-            }
-            throw new Exception("Cannot unmarshal type InShape");
+            serializer.Serialize(writer, ingredient.Integer.Value);
+            return;
         }
 
-        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        if (ingredient.IngredientClass == null) throw new ArgumentException(IngredientArgumentExceptionMessage);
+        
+        serializer.Serialize(writer, ingredient.IngredientClass);
+    }
+}
+
+internal class InShapeConverter : JsonConverter
+{
+    private const string InShapeArgumentExceptionMessage = "Cannot unmarshal type InShape";
+    
+    public static readonly InShapeConverter Singleton = new();
+
+    public override bool CanConvert(Type objectType) => objectType == typeof(InShape) || objectType == typeof(InShape?);
+
+    public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
+    {
+        switch (reader.TokenType)
         {
-            var value = (InShape)untypedValue;
-            if (value.IsNull)
-            {
-                serializer.Serialize(writer, null);
-                return;
-            }
-            if (value.Integer != null)
-            {
-                serializer.Serialize(writer, value.Integer.Value);
-                return;
-            }
-            if (value.IngredientClass != null)
-            {
-                serializer.Serialize(writer, value.IngredientClass);
-                return;
-            }
-            throw new Exception("Cannot marshal type InShape");
+            case JsonToken.Null:
+                return new InShape();
+
+            case JsonToken.Integer:
+                var integerValue = serializer.Deserialize<long>(reader);
+                return new InShape { Integer = integerValue };
+
+            case JsonToken.StartObject:
+                var objectValue = serializer.Deserialize<IngredientClass>(reader) ?? throw new ArgumentException(InShapeArgumentExceptionMessage);
+                return new InShape { IngredientClass = objectValue };
+            
+            default:
+                throw new ArgumentException(InShapeArgumentExceptionMessage);
+        } 
+    }
+
+    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+    {
+        if (value is not InShape inShape) throw new ArgumentException("Value cannot be null or not InShape");
+        
+        if (inShape.IsNull)
+        {
+            serializer.Serialize(writer, null);
+            return;
         }
+        if (inShape.Integer != null)
+        {
+            serializer.Serialize(writer, inShape.Integer.Value);
+            return;
+        }
+
+        if (inShape.IngredientClass == null) throw new ArgumentException(InShapeArgumentExceptionMessage);
+        
+        serializer.Serialize(writer, inShape.IngredientClass);
     }
 }
