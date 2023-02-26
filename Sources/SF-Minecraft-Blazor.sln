@@ -5,6 +5,8 @@ VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SF-Minecraft-Blazor", "SF-Minecraft-Blazor\SF-Minecraft-Blazor.csproj", "{79A89EED-891C-49B9-836C-ADC504F8333B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestController", "RestController\RestController.csproj", "{660A4DA2-44A2-4BB8-B4F7-4D36DB11F390}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{79A89EED-891C-49B9-836C-ADC504F8333B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79A89EED-891C-49B9-836C-ADC504F8333B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79A89EED-891C-49B9-836C-ADC504F8333B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{660A4DA2-44A2-4BB8-B4F7-4D36DB11F390}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{660A4DA2-44A2-4BB8-B4F7-4D36DB11F390}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{660A4DA2-44A2-4BB8-B4F7-4D36DB11F390}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{660A4DA2-44A2-4BB8-B4F7-4D36DB11F390}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
