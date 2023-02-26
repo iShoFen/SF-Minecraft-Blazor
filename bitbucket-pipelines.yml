@@ -32,10 +32,10 @@ definitions:
         - |
           if ! test -f "./TestResults/coverage/coverage.cobertura.xml"; then 
             echo "No test coverage report found. Setting coverage to 0%."
-            mkdir -p "./SF-Minecraft-Blazor/TestResults/coverage"
-            echo "<coverage version=\"1\"><file path=\".\"><lineToCover lineNumber=\"1\" covered=\"false\" /></file></coverage>" > ./SF-Minecraft-Blazor/TestResults/coverage/coverage.cobertura.xml 
+            mkdir -p "./TestResults/coverage"
+            echo "<coverage version=\"1\"><file path=\".\"><lineToCover lineNumber=\"1\" covered=\"false\" /></file></coverage>" > ./TestResults/coverage/coverage.cobertura.xml 
           fi
-        - reportgenerator -reports:"./SF-Minecraft-Blazor/TestResults/coverage/coverage.cobertura.xml" -reporttypes:SonarQube -targetdir:"./SF-Minecraft-Blazor/coveragereport";
+        - reportgenerator -reports:"./TestResults/coverage/coverage.cobertura.xml" -reporttypes:SonarQube -targetdir:"./coveragereport";
         - dotnet publish SF-Minecraft-Blazor.sln --no-restore --configuration Release -o CI_PROJECT_DIR/build/release
         - dotnet sonarscanner end /d:"sonar.login=${SONAR_TOKEN}"
 
