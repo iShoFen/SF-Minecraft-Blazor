@@ -100,3 +100,7 @@ pipelines:
       - step: *build-step
       - step: *test-step
       - step: *sonar-step
+      
+  pull-requests:
+    '**':
+      - step: *sonar-step
