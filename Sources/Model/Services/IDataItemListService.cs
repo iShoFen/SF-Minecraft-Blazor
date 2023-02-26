@@ -1,3 +1,5 @@
+using System.Net;
+
 namespace Model.Services;
 
 /// <summary>
@@ -17,7 +19,7 @@ public interface IDataItemListService
     /// </summary>
     /// <param name="id">The id of the item to delete.</param>
     /// <returns>The async task.</returns>
-    Task Delete(int id);
+    Task<HttpStatusCode> Delete(int id);
 
     /// <summary>
     /// Update an item in the item list.
@@ -25,13 +27,13 @@ public interface IDataItemListService
     /// <param name="id">The id of the item to update.</param>
     /// <param name="item">The item to update.</param>
     /// <returns>The async task.</returns>
-    Task Update(int id, Item item);
+    Task<HttpStatusCode> Update(int id, Item item);
 
     /// <summary>
     /// Get all items
     /// </summary>
     /// <returns>The list of items.</returns>
-    Task<List<Item>> All();
+    Task<IEnumerable<Item>> All();
     
     /// <summary>
     /// Get a items with pagination.
@@ -39,7 +41,7 @@ public interface IDataItemListService
     /// <param name="page">The page number.</param>
     /// <param name="pageSize">The number of items per page.</param>
     /// <returns>The list of items.</returns>
-    Task<List<Item>> List(int page, int pageSize);
+    Task<IEnumerable<Item>> List(int page, int pageSize);
     
     /// <summary>
     /// Get the number of items in the item list.
