@@ -4,26 +4,31 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Model.Inventory
+namespace Model.Inventory;
+
+/// <summary>
+/// The inventory model.
+/// </summary>
+public partial class InventoryModel : IEquatable<InventoryModel>
 {
     /// <summary>
-    /// The inventory model.
+    /// Gets or sets the name of the item.
     /// </summary>
-    public class InventoryModel
-    {
-        /// <summary>
-        /// Gets or sets the name of the item.
-        /// </summary>
-        public int ItemId { get; set; }
+    public int ItemId { get; set; }
 
-        /// <summary>
-        /// Gets or sets the number item.
-        /// </summary>
-        public int NumberItem { get; set; }
+    /// <summary>
+    /// Gets or sets the number item.
+    /// </summary>
+    public int NumberItem { get; set; }
 
-        /// <summary>
-        /// Gets or sets the position.
-        /// </summary>
-        public int Position { get; set; }
-    }
+    /// <summary>
+    /// Gets or sets the position.
+    /// </summary>
+    public int Position { get; set; }
+
+    public bool Equals(InventoryModel? other) 
+        => other is not null && Position == other.Position;
+
+    public override bool Equals(object? obj) 
+        => obj is InventoryModel other && Equals(other);
 }
