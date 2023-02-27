@@ -4,21 +4,26 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace RestController.Models
+namespace Model
 {
     /// <summary>
-    /// The recipe.
+    /// The inventory model.
     /// </summary>
-    public class Recipe
+    public class InventoryModel
     {
         /// <summary>
-        /// Gets or sets the give.
+        /// Gets or sets the name of the item.
         /// </summary>
-        public Item Give { get; set; }
+        public int ItemId { get; set; }
 
         /// <summary>
-        /// Gets or sets the have.
+        /// Gets or sets the number item.
         /// </summary>
-        public List<List<string>> Have { get; set; }
+        public int NumberItem { get; set; }
+
+        /// <summary>
+        /// Gets or sets the position.
+        /// </summary>
+        public int Position { get; set; }
     }
 }
