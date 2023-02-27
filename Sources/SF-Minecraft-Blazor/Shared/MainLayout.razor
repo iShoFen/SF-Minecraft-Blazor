@@ -2,14 +2,18 @@
 
 <PageTitle>SF-Minecraft-Blazor</PageTitle>
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+<CascadingValue Value="snackbarStack">
+    <SnackbarStack @ref="snackbarStack" Location="SnackbarStackLocation.Start"/>
 
-    <main class="main">
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
+    <div class="page">
+        <div class="sidebar">
+            <NavMenu/>
+        </div>
+
+        <main class="main">
+            <article class="content px-4">
+                @Body
+            </article>
+        </main>
+    </div>
+</CascadingValue>
