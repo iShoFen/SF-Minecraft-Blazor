@@ -1,5 +1,4 @@
 @page "/items"
-@using global::Model
 
 <h3>Les objets</h3>
 
@@ -44,4 +43,9 @@
         </DisplayTemplate>
     </DataGridColumn>
     <DataGridColumn TItem="Item" Field="@nameof(Item.CreatedDate)" Caption="Created date" DisplayFormat="{0:d}" DisplayFormatProvider="@System.Globalization.CultureInfo.GetCultureInfo("fr-FR")"/>
+    <DataGridColumn TItem="Item" Field="@nameof(Item.Id)" Filterable="false" Caption="Action">
+            <DisplayTemplate>
+                <a href="items/edit/@(context.Id)" class="btn btn-primary"><i class="fa fa-edit"></i> Update</a>
+            </DisplayTemplate>
+        </DataGridColumn>
 </DataGrid>

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace SF_Minecraft_Blazor.Model;
+namespace SF_Minecraft_Blazor.Entity;
 
 public class ItemEntity
 {
