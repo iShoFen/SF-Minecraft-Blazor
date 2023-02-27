@@ -4,7 +4,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Model
+namespace Model.Item
 {
     /// <summary>
     /// The item.
@@ -12,7 +12,7 @@ namespace Model
     public partial class Item: IEquatable<Item>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Item"/> class.
+        /// Initializes a new instance of the <see cref="Model.Item.Item"/> class.
         /// </summary>
         public Item()
         {

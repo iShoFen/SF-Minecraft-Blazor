@@ -4,7 +4,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Model
+namespace Model.Inventory
 {
     /// <summary>
     /// The inventory model.

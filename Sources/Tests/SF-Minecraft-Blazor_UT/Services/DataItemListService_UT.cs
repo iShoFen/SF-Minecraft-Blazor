@@ -1,6 +1,6 @@
 using System.Net;
 using System.Text.Json;
-using Model;
+using Model.Item;
 using RestController.Controllers;
 using SF_Minecraft_Blazor.Services;
 using Xunit;

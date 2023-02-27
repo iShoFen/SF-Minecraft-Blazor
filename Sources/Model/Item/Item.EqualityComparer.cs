@@ -1,4 +1,4 @@
-namespace Model;
+namespace Model.Item;
 
 public partial class Item
 {

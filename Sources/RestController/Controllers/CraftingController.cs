@@ -8,6 +8,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using Model;
+using Model.Item;
 
 namespace RestController.Controllers;
 

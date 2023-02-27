@@ -12,7 +12,7 @@ public interface IDataItemListService
     /// </summary>
     /// <param name="item">The item to add.</param>
     /// <returns>The async task.</returns>
-    Task Add(Item item);
+    Task Add(Item.Item item);
     
     /// <summary>
     /// Delete an item from the item list.
@@ -27,13 +27,13 @@ public interface IDataItemListService
     /// <param name="id">The id of the item to update.</param>
     /// <param name="item">The item to update.</param>
     /// <returns>The async task.</returns>
-    Task<HttpStatusCode> Update(int id, Item item);
+    Task<HttpStatusCode> Update(int id, Item.Item item);
 
     /// <summary>
     /// Get all items
     /// </summary>
     /// <returns>The list of items.</returns>
-    Task<IEnumerable<Item>> All();
+    Task<IEnumerable<Item.Item>> All();
     
     /// <summary>
     /// Get a items with pagination.
@@ -41,7 +41,7 @@ public interface IDataItemListService
     /// <param name="page">The page number.</param>
     /// <param name="pageSize">The number of items per page.</param>
     /// <returns>The list of items.</returns>
-    Task<IEnumerable<Item>> List(int page, int pageSize);
+    Task<IEnumerable<Item.Item>> List(int page, int pageSize);
     
     /// <summary>
     /// Get the number of items in the item list.
@@ -54,14 +54,14 @@ public interface IDataItemListService
     /// </summary>
     /// <param name="id">The id of the item to get.</param>
     /// <returns>The item.</returns>
-    Task<Item> GetById(int id);
+    Task<Item.Item> GetById(int id);
 
     /// <summary>
     /// Get an item from the item list by name.
     /// </summary>
     /// <param name="name">The name of the item to get.</param>
     /// <returns>The item.</returns>
-    Task<Item> GetByName(string name);
+    Task<Item.Item> GetByName(string name);
 
     /// <summary>
     /// Reset the item list.
