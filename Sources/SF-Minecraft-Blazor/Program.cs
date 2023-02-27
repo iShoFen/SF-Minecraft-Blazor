@@ -1,3 +1,4 @@
+using Blazored.Modal;
 using Blazorise;
 using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
@@ -15,6 +16,8 @@ builder.Services
     .AddBlazorise()
     .AddBootstrapProviders()
     .AddFontAwesomeIcons();
+
+builder.Services.AddBlazoredModal();
 
 builder.Services.AddScoped<HttpClient>(_ => new HttpClient
 {

@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Blazored.Modal" Version="7.1.0" />
     <PackageReference Include="Blazorise.Bootstrap" Version="1.2.1" />
     <PackageReference Include="Blazorise.DataGrid" Version="1.2.1" />
     <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.2.1" />

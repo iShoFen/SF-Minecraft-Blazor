@@ -9,6 +9,7 @@
 </div>
 
 <DataGrid TItem="Item"
+          @ref="itemGrid"
           class="text-white"
           Data="@Items"
           ReadData="@OnReadData"
@@ -45,7 +46,8 @@
     <DataGridColumn TItem="Item" Field="@nameof(Item.CreatedDate)" Caption="Created date" DisplayFormat="{0:d}" DisplayFormatProvider="@System.Globalization.CultureInfo.GetCultureInfo("fr-FR")"/>
     <DataGridColumn TItem="Item" Field="@nameof(Item.Id)" Filterable="false" Caption="Action">
         <DisplayTemplate>
-            <a href="items/edit/@(context.Id)" class="btn btn-primary"><i class="fa fa-edit"></i> Update</a>
+            <a href="items/edit/@(context.Id)" class="btn btn-secondary"><i class="fa fa-edit"></i> Update</a>
+            <button type="button" class="btn btn-danger" @onclick="() => OnDelete(context.Id)"><i class="fa fa-trash"></i> Delete</button>
         </DisplayTemplate>
     </DataGridColumn>
 </DataGrid>
