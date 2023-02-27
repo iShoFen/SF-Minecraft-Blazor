@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
-using Newtonsoft.Json.Serialization;
 
-namespace SF_Minecraft_Blazor.Model;
+namespace SF_Minecraft_Blazor.Entity;
 
 public class InventoryEntity
 {

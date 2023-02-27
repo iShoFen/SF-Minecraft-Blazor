@@ -1,5 +1,4 @@
 @page "/inventory"
-@using global::Model
 
 <div class="container">
     <div class="row">
@@ -14,7 +13,7 @@
             <DataGrid
                 class="text-white"
                 @ref="_dataGrid"
-                TItem="Item"
+                TItem="Model.Item"
                 Data="@Items"
                 TotalItems="@totalItems"
                 PageSize="10"
@@ -24,9 +23,9 @@
                 CustomFilter="@OnCustomFilter"
                 Responsive>
                 <DataGridCommandColumn/>
-                <DataGridColumn TItem="Item" Field="@nameof(Item.Id)" Caption="#" Sortable="false"/>
+                <DataGridColumn TItem="Model.Item" Field="@nameof(Model.Item.Id)" Caption="#" Sortable="false"/>
                 @* <DataGridColumn TItem="Item" Field="@nameof(Item.Image)" Caption="#"/> *@
-                <DataGridColumn TItem="Item" Field="@nameof(Item.DisplayName)" Caption="Display name"/>
+                <DataGridColumn TItem="Model.Item" Field="@nameof(Model.Item.DisplayName)" Caption="Display name"/>
             </DataGrid>
         </div>
     </div>

@@ -1,5 +1,4 @@
 @page "/items"
-@using global::Model
 
 <h3>Les objets</h3>
 
@@ -22,11 +21,11 @@
         <DisplayTemplate>
             @if (!string.IsNullOrWhiteSpace(context.ImageBase64))
             {
-                <img src="data:image/png;base64, @(context.ImageBase64)" class="img-thumbnail" title="@context.DisplayName" alt="@context.DisplayName" style="width: 50px;"/>
+                <img src="data:image/png;base64, @(context.ImageBase64)" class="img-thumbnail img-preview-small" title="@context.DisplayName" alt="@context.DisplayName"/>
             }
             else
             {
-                <img src="images/default.png" class="img-thumbnail" title="@context.DisplayName" alt="@context.DisplayName" style="width: 50px;"/>
+                <img src="images/default.png" class="img-thumbnail img-preview-small" title="@context.DisplayName" alt="@context.DisplayName"/>
             }
         </DisplayTemplate>
     </DataGridColumn>
@@ -44,4 +43,9 @@
         </DisplayTemplate>
     </DataGridColumn>
     <DataGridColumn TItem="Item" Field="@nameof(Item.CreatedDate)" Caption="Created date" DisplayFormat="{0:d}" DisplayFormatProvider="@System.Globalization.CultureInfo.GetCultureInfo("fr-FR")"/>
+    <DataGridColumn TItem="Item" Field="@nameof(Item.Id)" Filterable="false" Caption="Action">
+        <DisplayTemplate>
+            <a href="items/edit/@(context.Id)" class="btn btn-primary"><i class="fa fa-edit"></i> Update</a>
+        </DisplayTemplate>
+    </DataGridColumn>
 </DataGrid>

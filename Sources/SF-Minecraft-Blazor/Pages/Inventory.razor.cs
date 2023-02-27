@@ -1,13 +1,12 @@
 using Blazorise.DataGrid;
-using Model;
 
 namespace SF_Minecraft_Blazor.Pages;
 
 public partial class Inventory
 {
-    private List<Item> Items { get; set; } = new()
+    private List<Model.Item> Items { get; set; } = new()
     {
-        new Item
+        new Model.Item
         {
             Id = 1,
             DisplayName = "Diamond",
@@ -18,7 +17,7 @@ public partial class Inventory
             MaxDurability = 4,
             StackSize = 45
         },
-        new Item
+        new Model.Item
         {
             Id = 1,
             DisplayName = "Dirt",
@@ -29,7 +28,7 @@ public partial class Inventory
             MaxDurability = 4,
             StackSize = 45
         },
-        new Item
+        new Model.Item
         {
             Id = 1,
             DisplayName = "Stone",
@@ -46,14 +45,14 @@ public partial class Inventory
 
     private string SearchValue { get; set; } = "";
 
-    private DataGrid<Item> _dataGrid = null!;
+    private DataGrid<Model.Item> _dataGrid = null!;
 
     public Inventory()
     {
         totalItems = Items.Count;
     }
 
-    private Task OnReadData(DataGridReadDataEventArgs<Item> arg)
+    private Task OnReadData(DataGridReadDataEventArgs<Model.Item> arg)
     {
         return Task.CompletedTask;
     }
@@ -64,7 +63,7 @@ public partial class Inventory
         return _dataGrid.Reload();
     }
 
-    private bool OnCustomFilter(Item item)
+    private bool OnCustomFilter(Model.Item item)
     {
         if (string.IsNullOrEmpty(SearchValue))
             return true;
