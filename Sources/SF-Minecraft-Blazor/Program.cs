@@ -1,6 +1,8 @@
 using Blazorise;
 using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
+using Model.Services;
+using SF_Minecraft_Blazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +15,13 @@ builder.Services
     .AddBlazorise()
     .AddBootstrapProviders()
     .AddFontAwesomeIcons();
+
+builder.Services.AddScoped<HttpClient>(_ => new HttpClient
+{
+    BaseAddress = new Uri(builder.Configuration["ApiUrl"])
+});
+
+builder.Services.AddScoped<IDataItemListService, DataItemListService>();
 
 var app = builder.Build();
 

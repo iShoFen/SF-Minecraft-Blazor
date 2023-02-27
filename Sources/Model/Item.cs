@@ -4,7 +4,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace RestController.Models
+namespace Model
 {
     /// <summary>
     /// The item.
