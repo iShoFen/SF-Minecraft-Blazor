@@ -19,14 +19,14 @@ public class ItemEntity
     
     [Required] [Range(1,125)] public int MaxDurability { get; set; }
     
-    public IEnumerable<string> EnchantCategories { get; set; }
+    public IList<string> EnchantCategories { get; set; }
     
-    public IEnumerable<string> RepairWith { get; set; }
+    public IList<string> RepairWith { get; set; }
     
     [Required]
     [Range(typeof(bool), "true", "true", ErrorMessage = "You must accept the terms and conditions.")]
     public bool AcceptTerms { get; set; }
     
     [Required(ErrorMessage = "The image is required.")]
-    public byte[] Image { get; set; }
+    public string ImageBase64 { get; set; }
 }

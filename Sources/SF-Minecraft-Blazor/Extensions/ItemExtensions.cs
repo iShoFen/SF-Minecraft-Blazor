@@ -15,11 +15,11 @@ public static class ItemExtensions
             MaxDurability = entity.MaxDurability,
             EnchantCategories = entity.EnchantCategories.ToList(),
             RepairWith = entity.RepairWith.ToList(),
-            ImageBase64 = Convert.ToBase64String(entity.Image)
+            ImageBase64 = entity.ImageBase64
         };
-    
-    public static ItemEntity ToEntity(this Item model) 
-        => new() 
+
+    public static ItemEntity ToEntity(this Item model)
+        => new()
         {
             Id = model.Id,
             DisplayName = model.DisplayName,
@@ -28,6 +28,6 @@ public static class ItemExtensions
             MaxDurability = model.MaxDurability,
             EnchantCategories = model.EnchantCategories,
             RepairWith = model.RepairWith,
-            Image = Convert.FromBase64String(model.ImageBase64)
+            ImageBase64 = model.ImageBase64
         };
 }

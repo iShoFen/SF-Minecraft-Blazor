@@ -1,51 +1,26 @@
-using SF_Minecraft_Blazor.Data;
+using Blazorise.DataGrid;
+using Microsoft.AspNetCore.Components;
+using Model;
+using Model.Services;
 
 namespace SF_Minecraft_Blazor.Pages;
 
 public partial class ItemList
 {
-    private IEnumerable<Item> _items = new List<Item>();
+    [Inject] public IDataItemListService DataItemListService { get; set; }
 
-    private int _totalItem;
+    private IEnumerable<Item> Items { get; set; } = new List<Item>();
 
-    private void OnReadData()
+    private int TotalItems { get; set; }
+
+    private async Task OnReadData(DataGridReadDataEventArgs<Item> e)
     {
-        _items = new List<Item>
+        if (e.CancellationToken.IsCancellationRequested) return;
+
+        if (!e.CancellationToken.IsCancellationRequested)
         {
-            new()
-            {
-                Id = 1,
-                DisplayName = "Item 1",
-                Name = "item1",
-                CreatedDate = DateTime.Now,
-                EnchantCategories = new List<string>(),
-                RepairWith = new List<string>(),
-                MaxDurability = 4,
-                StackSize = 45
-            },
-            new()
-            {
-                Id = 1,
-                DisplayName = "Item 1",
-                Name = "item1",
-                CreatedDate = DateTime.Now,
-                EnchantCategories = new List<string>(),
-                RepairWith = new List<string>(),
-                MaxDurability = 4,
-                StackSize = 45
-            },
-            new()
-            {
-                Id = 1,
-                DisplayName = "Item 1",
-                Name = "item1",
-                CreatedDate = DateTime.Now,
-                EnchantCategories = new List<string>(),
-                RepairWith = new List<string>(),
-                MaxDurability = 4,
-                StackSize = 45
-            }
-        };
-        _totalItem = _items.Count();
+            TotalItems = await DataItemListService.Count();
+            Items = await DataItemListService.List(e.Page, e.PageSize);
+        }
     }
 }

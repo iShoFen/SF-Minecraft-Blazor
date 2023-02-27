@@ -1,5 +1,5 @@
 using Blazorise.DataGrid;
-using SF_Minecraft_Blazor.Data;
+using Model;
 
 namespace SF_Minecraft_Blazor.Pages;
 
