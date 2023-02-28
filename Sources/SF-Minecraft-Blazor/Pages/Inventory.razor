@@ -27,7 +27,7 @@
                     <DisplayTemplate>
                         @if (!string.IsNullOrWhiteSpace(context.ImageBase64))
                         {
-                            <img src="data:" class="img-thumbnail img-preview-small" title="@context.DisplayName" alt="@context.DisplayName"/>
+                            <img src="data:image/png;base64, @(context.ImageBase64)" class="img-thumbnail img-preview-small" title="@context.DisplayName" alt="@context.DisplayName"/>
                         }
                         else
                         {
