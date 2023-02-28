@@ -22,15 +22,12 @@ public partial class MyInventory
 
     [CascadingParameter] public SnackbarStack SnackbarStack { get; set; }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnInitializedAsync()
     {
-        if (!firstRender) return;
-
-        await base.OnAfterRenderAsync(firstRender);
-
         try
         {
             Items = (await DataInventoryService.GetInventory()).Select(item => item.ToEntity()).ToList();
+            await SnackbarStack.PushAsync("Inventory loaded", SnackbarColor.Info);
         }
         catch (Exception)
         {

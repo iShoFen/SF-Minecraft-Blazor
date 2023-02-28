@@ -1,6 +1,8 @@
+using System.Net;
 using System.Reflection.Metadata;
 using Blazorise.Snackbar;
 using Microsoft.AspNetCore.Components;
+using Model.Inventory;
 using Model.Item;
 using Model.Services;
 using SF_Minecraft_Blazor.Entity;
@@ -21,7 +23,7 @@ public partial class InventoryItem
     /// </summary>
     [Parameter]
     public Item? Item { get; set; }
-    
+
     public int Count { get; set; }
 
     /// <summary>
@@ -35,11 +37,12 @@ public partial class InventoryItem
     /// </summary>
     [CascadingParameter]
     public Inventory Inventory { get; set; }
-    
-    [CascadingParameter]
-    public List<InventoryEntity> Items { get; set; }
+
+    [CascadingParameter] public List<InventoryEntity> Items { get; set; }
 
     [Inject] public IDataItemListService DataItemListService { get; set; }
+
+    [Inject] public IDataInventoryService DataInventoryService { get; set; }
 
     [CascadingParameter] public SnackbarStack SnackbarStack { get; set; }
 
@@ -103,17 +106,58 @@ public partial class InventoryItem
             {
                 Item = currentDragItem.Item;
                 Count = currentDragItem.Count;
+                try
+                {
+                    await DataInventoryService.AddToInventory(new InventoryModel
+                    {
+                        Position = Index,
+                        ItemId = Item.Id,
+                        NumberItem = Count
+                    });
+                    await SnackbarStack.PushAsync($"The item {Item.DisplayName} was added successfully",
+                        SnackbarColor.Success);
+                }
+                catch (Exception e)
+                {
+                    await SnackbarStack.PushAsync("Error while updating inventory",
+                        SnackbarColor.Danger);
+                }
             }
             else
             {
                 if (currentDragItem.Item.Id == Item?.Id)
                 {
                     Count += currentDragItem.Count;
+                    try
+                    {
+                        var result = await DataInventoryService.UpdateInventory(new InventoryModel
+                        {
+                            Position = Index,
+                            ItemId = Item.Id,
+                            NumberItem = Count
+                        });
+                        if (result == HttpStatusCode.OK)
+                        {
+                            await SnackbarStack.PushAsync($"The item {Item.DisplayName} was updated successfully",
+                                SnackbarColor.Success);
+                        }
+                        else
+                        {
+                            await SnackbarStack.PushAsync("Error while updating inventory",
+                                SnackbarColor.Danger);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        await SnackbarStack.PushAsync("Error while updating inventory",
+                            SnackbarColor.Danger);
+                    }
                 }
                 else
                 {
-                    await SnackbarStack.PushAsync("Cannot override item because it is not the same", SnackbarColor.Danger);
-                }  
+                    await SnackbarStack.PushAsync("Cannot override item because it is not the same",
+                        SnackbarColor.Danger);
+                }
             }
         }
     }
