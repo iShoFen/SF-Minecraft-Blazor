@@ -1,0 +1,32 @@
+@page "/inventory"
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <MyInventory/>
+        </div>
+        <div class="col container">
+            <h3>List of items</h3>
+
+            <TextEdit Text="@SearchValue" TextChanged="@OnSearchRequested" Placeholder="Search for item..."/>
+
+            <DataGrid
+                class="text-white"
+                @ref="_dataGrid"
+                TItem="Model.Item"
+                Data="@Items"
+                TotalItems="@totalItems"
+                PageSize="10"
+                ShowPager
+                Sortable
+                SortMode="DataGridSortMode.Single"
+                CustomFilter="@OnCustomFilter"
+                Responsive>
+                <DataGridCommandColumn/>
+                <DataGridColumn TItem="Model.Item" Field="@nameof(Model.Item.Id)" Caption="#" Sortable="false"/>
+                @* <DataGridColumn TItem="Item" Field="@nameof(Item.Image)" Caption="#"/> *@
+                <DataGridColumn TItem="Model.Item" Field="@nameof(Model.Item.DisplayName)" Caption="Display name"/>
+            </DataGrid>
+        </div>
+    </div>
+</div>

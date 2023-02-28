@@ -1,51 +1,74 @@
-using SF_Minecraft_Blazor.Data;
+using System.Net;
+using Blazored.Modal;
+using Blazored.Modal.Services;
+using Blazorise.DataGrid;
+using Blazorise.Snackbar;
+using Microsoft.AspNetCore.Components;
+using Model;
+using Model.Services;
+using SF_Minecraft_Blazor.Modals;
 
 namespace SF_Minecraft_Blazor.Pages;
 
 public partial class ItemList
 {
-    private IEnumerable<Item> _items = new List<Item>();
+    [Inject] public IDataItemListService DataItemListService { get; set; }
 
-    private int _totalItem;
+    [CascadingParameter] public SnackbarStack SnackbarStack { get; set; }
 
-    private void OnReadData()
+    [CascadingParameter] public IModalService Modal { get; set; }
+
+    private DataGrid<Item>? itemGrid;
+
+    private IEnumerable<Model.Item> Items { get; set; } = new List<Model.Item>();
+
+    private int TotalItems { get; set; }
+
+    private async Task OnReadData(DataGridReadDataEventArgs<Model.Item> e)
     {
-        _items = new List<Item>
+        if (e.CancellationToken.IsCancellationRequested) return;
+
+        if (!e.CancellationToken.IsCancellationRequested)
         {
-            new()
+            try
             {
-                Id = 1,
-                DisplayName = "Item 1",
-                Name = "item1",
-                CreatedDate = DateTime.Now,
-                EnchantCategories = new List<string>(),
-                RepairWith = new List<string>(),
-                MaxDurability = 4,
-                StackSize = 45
-            },
-            new()
-            {
-                Id = 1,
-                DisplayName = "Item 1",
-                Name = "item1",
-                CreatedDate = DateTime.Now,
-                EnchantCategories = new List<string>(),
-                RepairWith = new List<string>(),
-                MaxDurability = 4,
-                StackSize = 45
-            },
-            new()
-            {
-                Id = 1,
-                DisplayName = "Item 1",
-                Name = "item1",
-                CreatedDate = DateTime.Now,
-                EnchantCategories = new List<string>(),
-                RepairWith = new List<string>(),
-                MaxDurability = 4,
-                StackSize = 45
+                TotalItems = await DataItemListService.Count();
+                Items = await DataItemListService.List(e.Page, e.PageSize);
+                await SnackbarStack.PushAsync("Data loaded successfully", SnackbarColor.Info);
             }
-        };
-        _totalItem = _items.Count();
+            catch (Exception)
+            {
+                await SnackbarStack.PushAsync("Cannot load data from data source", SnackbarColor.Danger);
+            }
+        }
+    }
+
+    private async Task OnDelete(int id)
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(Item.Id), id);
+
+        var modal = Modal.Show<DeleteItemConfirmation>("Delete Confirmation", parameters);
+        var result = await modal.Result;
+
+        if (result.Cancelled)
+        {
+            return;
+        }
+
+        var code = await DataItemListService.Delete(id);
+        
+        if (code == HttpStatusCode.OK)
+        {
+            await SnackbarStack.PushAsync("Item deleted successfully", SnackbarColor.Success);
+        }
+        else
+        {
+            await SnackbarStack.PushAsync("Cannot delete item", SnackbarColor.Danger);
+        }
+        
+
+        // Refresh the grid
+        itemGrid?.Reload();
     }
 }

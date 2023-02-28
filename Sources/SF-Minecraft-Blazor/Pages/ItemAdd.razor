@@ -1,0 +1,69 @@
+@page "/items/add"
+
+<h3>ItemAdd</h3>
+
+<EditForm Model="@itemEntity" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <Microsoft.AspNetCore.Components.Forms.ValidationSummary />
+
+    <p>
+        <label for="display-name">
+            Display name:
+            <InputText id="display-name" @bind-Value="itemEntity.DisplayName" />
+        </label>
+    </p>
+    <p>
+        <label for="name">
+            Name:
+            <InputText id="name" @bind-Value="itemEntity.Name" />
+        </label>
+    </p>
+    <p>
+        <label for="stack-size">
+            Stack size:
+            <InputNumber id="stack-size" TValue="int" @bind-Value="itemEntity.StackSize" />
+        </label>
+    </p>
+    <p>
+        <label for="max-durability">
+            Max durability:
+            <InputNumber id="max-durability" TValue="int" @bind-Value="itemEntity.MaxDurability" />
+        </label>
+    </p>
+    <p>
+        Enchant categories:
+        <div>
+            @foreach (var item in enchantCategories)
+            {
+                <label>
+                    <input type="checkbox" @onchange="@(e => OnEnchantCategoriesChange(item, e.Value))" />@item
+                </label>
+            }
+        </div>
+    </p>
+    <p>
+        Repair with:
+        <div>
+            @foreach (var item in repairWith)
+            {
+                <label>
+                    <input type="checkbox" @onchange="@(e => OnRepairWithChange(item, e.Value))" />@item
+                </label>
+            }
+        </div>
+    </p>
+    <p>
+        <label>
+            Item image:
+            <InputFile OnChange="@LoadImage" accept=".png" />
+        </label>
+    </p>
+    <p>
+        <label>
+            Accept Condition:
+            <InputCheckbox @bind-Value="itemEntity.AcceptTerms" />
+        </label>
+    </p>
+
+    <button type="submit">Submit</button>
+</EditForm>

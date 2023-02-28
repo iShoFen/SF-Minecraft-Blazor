@@ -1,5 +1,5 @@
 using Model.Inventory;
-using SF_Minecraft_Blazor.Model;
+using SF_Minecraft_Blazor.Entity;
 
 namespace SF_Minecraft_Blazor.Extensions;
 

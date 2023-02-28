@@ -1,19 +1,38 @@
 @page "/items"
-@using SF_Minecraft_Blazor.Data
 
 <h3>Les objets</h3>
 
+<div>
+    <NavLink class="btn btn-primary" href="items/add" Match="NavLinkMatch.All">
+        <i class="fa fa-plus"></i> Add
+    </NavLink>
+</div>
+
 <DataGrid TItem="Item"
-          Data="@_items"
+          @ref="itemGrid"
+          class="text-white"
+          Data="@Items"
           ReadData="@OnReadData"
-          TotalItems="@_totalItem"
+          TotalItems="@TotalItems"
           PageSize="10"
           ShowPager
           Responsive>
-    <DataGridColumn TItem="Item" Field="@nameof(Item.Id)" Caption="#" />
-    <DataGridColumn TItem="Item" Field="@nameof(Item.DisplayName)" Caption="Display name" />
-    <DataGridColumn TItem="Item" Field="@nameof(Item.StackSize)" Caption="Stack size" />
-    <DataGridColumn TItem="Item" Field="@nameof(Item.MaxDurability)" Caption="Maximum durability" />
+    <DataGridColumn TItem="Item" Field="@nameof(Item.Id)" Caption="#"/>
+    <DataGridColumn TItem="Item" Field="@nameof(Item.Id)" Caption="Image">
+        <DisplayTemplate>
+            @if (!string.IsNullOrWhiteSpace(context.ImageBase64))
+            {
+                <img src="data:image/png;base64, @(context.ImageBase64)" class="img-thumbnail img-preview-small" title="@context.DisplayName" alt="@context.DisplayName"/>
+            }
+            else
+            {
+                <img src="images/default.png" class="img-thumbnail img-preview-small" title="@context.DisplayName" alt="@context.DisplayName"/>
+            }
+        </DisplayTemplate>
+    </DataGridColumn>
+    <DataGridColumn TItem="Item" Field="@nameof(Item.DisplayName)" Caption="Display name"/>
+    <DataGridColumn TItem="Item" Field="@nameof(Item.StackSize)" Caption="Stack size"/>
+    <DataGridColumn TItem="Item" Field="@nameof(Item.MaxDurability)" Caption="Maximum durability"/>
     <DataGridColumn TItem="Item" Field="@nameof(Item.EnchantCategories)" Caption="Enchant categories">
         <DisplayTemplate>
             @string.Join(", ", context.EnchantCategories)
@@ -24,5 +43,11 @@
             @string.Join(", ", context.RepairWith)
         </DisplayTemplate>
     </DataGridColumn>
-    <DataGridColumn TItem="Item" Field="@nameof(Item.CreatedDate)" Caption="Created date" DisplayFormat="{0:d}" DisplayFormatProvider="@System.Globalization.CultureInfo.GetCultureInfo("fr-FR")" />
+    <DataGridColumn TItem="Item" Field="@nameof(Item.CreatedDate)" Caption="Created date" DisplayFormat="{0:d}" DisplayFormatProvider="@System.Globalization.CultureInfo.GetCultureInfo("fr-FR")"/>
+    <DataGridColumn TItem="Item" Field="@nameof(Item.Id)" Filterable="false" Caption="Action">
+        <DisplayTemplate>
+            <a href="items/edit/@(context.Id)" class="btn btn-secondary"><i class="fa fa-edit"></i> Update</a>
+            <button type="button" class="btn btn-danger" @onclick="() => OnDelete(context.Id)"><i class="fa fa-trash"></i> Delete</button>
+        </DisplayTemplate>
+    </DataGridColumn>
 </DataGrid>
