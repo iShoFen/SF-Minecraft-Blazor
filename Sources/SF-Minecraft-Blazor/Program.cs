@@ -25,6 +25,7 @@ builder.Services.AddScoped<HttpClient>(_ => new HttpClient
 });
 
 builder.Services.AddScoped<IDataItemListService, DataItemListService>();
+builder.Services.AddScoped<IDataInventoryService, DataInventoryService>();
 
 var app = builder.Build();
 
