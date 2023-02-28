@@ -1,6 +1,7 @@
 using Blazorise.DataGrid;
 using Blazorise.Snackbar;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Model.Item;
 using Model.Services;
 
@@ -8,6 +9,11 @@ namespace SF_Minecraft_Blazor.Pages;
 
 public partial class Inventory
 {
+    /// <summary>
+    /// The current drag item.
+    /// </summary>
+    public Item? CurrentDragItem { get; set; }
+
     /// <summary>
     /// Injected service for accessing the inventory data.
     /// </summary>
@@ -82,5 +88,9 @@ public partial class Inventory
 
     private bool OnCustomFilter(Item item) 
         => string.IsNullOrEmpty(SearchValue) || item.DisplayName.StartsWith(SearchValue, StringComparison.OrdinalIgnoreCase);
-    
+
+    private void OnDragStart(Item item)
+    {
+        CurrentDragItem = item;
+    }
 }

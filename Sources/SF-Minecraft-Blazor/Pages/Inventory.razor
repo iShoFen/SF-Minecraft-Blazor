@@ -1,42 +1,46 @@
 @page "/inventory"
 @using Model.Item
 
-<div class="container">
-    <div class="row">
-        <div class="col">
-            <MyInventory/>
-        </div>
-        <div class="col container">
-            <h3>List of items</h3>
+<CascadingValue Value="CurrentDragItem">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <MyInventory/>
+            </div>
+            <div class="col container">
+                <h3>List of items</h3>
 
-            <TextEdit Text="@SearchValue" TextChanged="@OnSearchRequested" Placeholder="Search for item..."/>
+                <TextEdit Text="@SearchValue" TextChanged="@OnSearchRequested" Placeholder="Search for item..."/>
 
-            <DataGrid class="text-white"
-                      TItem="Item"
-                      @ref="_itemGrid"
-                      Data="@DisplayItems"
-                      TotalItems="@TotalItems"
-                      PageSize="10"
-                      ReadData="@OnReadData"
-                      ShowPager
-                      Sortable
-                      SortMode="DataGridSortMode.Single"
-                      Responsive>
-                <DataGridColumn TItem="Item" Field="@nameof(Item.Id)" Caption="#" Sortable="false"/>
-                <DataGridColumn TItem="Item" Field="@nameof(Item.Id)" Caption="Image" Sortable="false">
-                    <DisplayTemplate>
-                        @if (!string.IsNullOrWhiteSpace(context.ImageBase64))
-                        {
-                            <img src="data:image/png;base64, @(context.ImageBase64)" class="img-thumbnail img-preview-small" title="@context.DisplayName" alt="@context.DisplayName"/>
-                        }
-                        else
-                        {
-                            <img src="images/default.png" class="img-thumbnail img-preview-small" title="@context.DisplayName" alt="@context.DisplayName"/>
-                        }
-                    </DisplayTemplate>
-                </DataGridColumn>
-                <DataGridColumn TItem="Item" Field="@nameof(Item.DisplayName)" Caption="Display name"/>
-            </DataGrid>
+                <DataGrid class="text-white"
+                          TItem="Item"
+                          @ref="_itemGrid"
+                          Data="@DisplayItems"
+                          TotalItems="@TotalItems"
+                          PageSize="10"
+                          ReadData="@OnReadData"
+                          ShowPager
+                          Sortable
+                          SortMode="DataGridSortMode.Single"
+                          Responsive>
+                    <DataGridColumn TItem="Item" Field="@nameof(Item.Id)" Caption="#" Sortable="false"/>
+                    <DataGridColumn TItem="Item" Field="@nameof(Item.Id)" Caption="Image" Sortable="false">
+                        <DisplayTemplate>
+                            @if (!string.IsNullOrWhiteSpace(context.ImageBase64))
+                            {
+                                <img src="data:image/png;base64, @(context.ImageBase64)" class="img-thumbnail img-preview-small" title="@context.DisplayName" alt="@context.DisplayName"
+                                     draggable="true" ondragstart="@(() => OnDragStart(context))"/>
+                            }
+                            else
+                            {
+                                <img src="images/default.png" class="img-thumbnail img-preview-small" title="@context.DisplayName" alt="@context.DisplayName"
+                                     draggable="true" ondragstart="@(() => OnDragStart(context))"/>
+                            }
+                        </DisplayTemplate>
+                    </DataGridColumn>
+                    <DataGridColumn TItem="Item" Field="@nameof(Item.DisplayName)" Caption="Display name"/>
+                </DataGrid>
+            </div>
         </div>
     </div>
-</div>
+</CascadingValue>
