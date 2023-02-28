@@ -1,21 +1,32 @@
 <CascadingValue Value="@this">
-    <div class="container">
-        <div class="row">
-            <div class="col-6">
-                <div>
-                    <div class="css-grid">
-                        @foreach (var item in Items)
-                        {
-                            <InventoryItem Item="item" NoDrop="true"/>
-                        }
-                    </div>
+    <CascadingValue Value="Items">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <InventoryItem NoDrop="false" Index="0"/>
+                    <InventoryItem NoDrop="false" Index="1"/>
+                    <InventoryItem NoDrop="false" Index="2"/>
+                    <InventoryItem NoDrop="false" Index="3"/>
+                    <InventoryItem NoDrop="false" Index="4"/>
+                    <InventoryItem NoDrop="false" Index="5"/>
+                </div>
+                <div class="col">
+                    <InventoryItem NoDrop="false" Index="6"/>
+                    <InventoryItem NoDrop="false" Index="7"/>
+                    <InventoryItem NoDrop="false" Index="8"/>
+                    <InventoryItem NoDrop="false" Index="9"/>
+                    <InventoryItem NoDrop="false" Index="10"/>
+                    <InventoryItem NoDrop="false" Index="11"/>
+                </div>
+                <div class="col">
+                    <InventoryItem NoDrop="false" Index="12"/>
+                    <InventoryItem NoDrop="false" Index="13"/>
+                    <InventoryItem NoDrop="false" Index="14"/>
+                    <InventoryItem NoDrop="false" Index="15"/>
+                    <InventoryItem NoDrop="false" Index="16"/>
+                    <InventoryItem NoDrop="false" Index="17"/>
                 </div>
             </div>
-            
-            <div class="col-12">
-                <div>Actions</div>
-                <div class="actions" id="actions"></div>
-            </div>
         </div>
-    </div>
+    </CascadingValue>
 </CascadingValue>
