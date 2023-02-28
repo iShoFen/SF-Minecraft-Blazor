@@ -135,9 +135,7 @@ public class DataInventoryServiceUt
             TestUtils.GetHttpClientRead(
                 new InventoryController(),
                 "GetInventory",
-                "Inventory/"),
-            TestUtils.BaseUrl
-        );
+                "Inventory/"));
         
         Assert.NotNull(service);
     }
@@ -151,9 +149,7 @@ public class DataInventoryServiceUt
             TestUtils.GetHttpClientRead(
                 new InventoryController(),
                 "GetInventory",
-                "Inventory/"),
-            TestUtils.BaseUrl
-        );
+                "Inventory/"));
         
         var result = await service.GetInventory();
         
@@ -173,9 +169,7 @@ public class DataInventoryServiceUt
                 "AddToInventory",
                 "Inventory/",
                 typeof(InventoryModel),
-                item),
-            TestUtils.BaseUrl
-        );
+                item));
         
         await service.AddToInventory(item);
         var result = await controller.GetInventory();
@@ -207,9 +201,7 @@ public class DataInventoryServiceUt
                 "DeleteFromInventory",
                 $"Inventory/{position}",
                 typeof(int),
-                position),
-            TestUtils.BaseUrl
-        );
+                position));
 
 
         HttpStatusCode result;
@@ -243,9 +235,7 @@ public class DataInventoryServiceUt
                 "UpdateInventory",
                 "Inventory/",
                 typeof(InventoryModel),
-                updatedItem),
-            TestUtils.BaseUrl
-        );
+                updatedItem));
         
         HttpStatusCode result;
         if (!expected)

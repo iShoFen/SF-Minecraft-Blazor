@@ -10,7 +10,7 @@ namespace SF_Minecraft_Blazor_UT;
 
 public static class TestUtils
 {
-    public const string BaseUrl = "https://localhost:7234/api/";
+    private const string BaseUrl = "https://localhost:7234/api/";
 
     public static HttpClient GetHttpClientRead(object apiController, string methodName, string endpoint, params object[]? parameters)
     {
@@ -47,7 +47,10 @@ public static class TestUtils
                        }
                    );
 
-        return new HttpClient(handlerMock.Object);
+        return new HttpClient(handlerMock.Object)
+        {
+            BaseAddress = new Uri(BaseUrl)
+        };
     }
 
     public static HttpClient GetHttpClientWrite(object apiController, string methodName, string endpoint, Type requestType, params object[] parameters)
@@ -64,7 +67,10 @@ public static class TestUtils
                    .ReturnsAsync(CreateResponseMessage(apiController, methodName, parameters)
                    );
 
-        return new HttpClient(handlerMock.Object);
+        return new HttpClient(handlerMock.Object)
+        {
+            BaseAddress = new Uri(BaseUrl)
+        };
     }
     private static HttpResponseMessage CreateResponseMessage(object controller, string methodName, params object[] parameters)
     {
