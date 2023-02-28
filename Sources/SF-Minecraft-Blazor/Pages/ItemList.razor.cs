@@ -1,3 +1,4 @@
+using System.Net;
 using Blazored.Modal;
 using Blazored.Modal.Services;
 using Blazorise.DataGrid;
@@ -35,7 +36,7 @@ public partial class ItemList
                 Items = await DataItemListService.List(e.Page, e.PageSize);
                 await SnackbarStack.PushAsync("Data loaded successfully", SnackbarColor.Info);
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 await SnackbarStack.PushAsync("Cannot load data from data source", SnackbarColor.Danger);
             }
@@ -55,7 +56,17 @@ public partial class ItemList
             return;
         }
 
-        await DataItemListService.Delete(id);
+        var code = await DataItemListService.Delete(id);
+        
+        if (code == HttpStatusCode.OK)
+        {
+            await SnackbarStack.PushAsync("Item deleted successfully", SnackbarColor.Success);
+        }
+        else
+        {
+            await SnackbarStack.PushAsync("Cannot delete item", SnackbarColor.Danger);
+        }
+        
 
         // Refresh the grid
         itemGrid?.Reload();
