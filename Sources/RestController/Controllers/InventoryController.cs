@@ -8,6 +8,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using Model;
+using Model.Inventory;
+
 namespace RestController.Controllers;
 
 /// <summary>
@@ -19,7 +21,7 @@ public class InventoryController : ControllerBase
 {
     private const string InventoryPath = "Data/inventory.json";
     private const string InventoryNotFoundMessage = "Unable to get the inventory.";
-    private const string ItemNotFoundMessage = "Unable to found the item with id: {0} at position: {1}";
+    private const string ItemNotFoundMessage = "Unable to found the item at position: {0}";
     
     /// <summary>
     /// The json serializer options.
@@ -40,8 +42,11 @@ public class InventoryController : ControllerBase
     [Route("")]
     public Task AddToInventory(InventoryModel item)
     {
-        var data = JsonSerializer.Deserialize<List<InventoryModel>>(System.IO.File.ReadAllText(InventoryPath), _jsonSerializerOptions);
-
+        List<InventoryModel>? data;
+        data = !System.IO.File.Exists(InventoryPath) 
+            ? new List<InventoryModel>() 
+            : JsonSerializer.Deserialize<List<InventoryModel>>(System.IO.File.ReadAllText(InventoryPath), _jsonSerializerOptions);
+        
         if (data == null)
         {
             throw new FileNotFoundException(InventoryNotFoundMessage);
@@ -57,11 +62,11 @@ public class InventoryController : ControllerBase
     /// <summary>
     /// Deletes from inventory.
     /// </summary>
-    /// <param name="item">The item.</param>
+    /// <param name="position">The position.</param>
     /// <returns>The async task.</returns>
     [HttpDelete]
-    [Route("")]
-    public Task DeleteFromInventory(InventoryModel item)
+    [Route("{position:int}")]
+    public Task DeleteFromInventory(int position)
     {
         var data = JsonSerializer.Deserialize<List<InventoryModel>>(System.IO.File.ReadAllText(InventoryPath), _jsonSerializerOptions);
 
@@ -70,11 +75,11 @@ public class InventoryController : ControllerBase
             throw new FileNotFoundException(InventoryNotFoundMessage);
         }
 
-        var inventoryItem = data.FirstOrDefault(w => w.ItemId == item.ItemId && w.Position == item.Position);
+        var inventoryItem = data.FirstOrDefault(w => w.Position == position);
 
         if (inventoryItem == null)
         {
-            throw new ArgumentException(string.Format(ItemNotFoundMessage, item.ItemId, item.Position));
+            throw new ArgumentException(string.Format(ItemNotFoundMessage, position));
         }
 
         data.Remove(inventoryItem);
@@ -92,11 +97,7 @@ public class InventoryController : ControllerBase
     [Route("")]
     public Task<List<InventoryModel>> GetInventory()
     {
-        if (!System.IO.File.Exists(InventoryPath))
-        {
-            System.IO.File.Create(InventoryPath).Close();
-            return Task.FromResult(new List<InventoryModel>());
-        }
+        if (!System.IO.File.Exists(InventoryPath))  return Task.FromResult(new List<InventoryModel>());
 
         var data = JsonSerializer.Deserialize<List<InventoryModel>>(System.IO.File.ReadAllText(InventoryPath), _jsonSerializerOptions);
             
@@ -123,11 +124,10 @@ public class InventoryController : ControllerBase
 
         if (inventoryItem == null)
         {
-            throw new ArgumentException(string.Format(ItemNotFoundMessage, item.ItemId, item.Position));
+            throw new ArgumentException(string.Format(ItemNotFoundMessage, item.Position));
         }
-
-        inventoryItem.ItemId = item.ItemId;
-        inventoryItem.Position = item.Position;
+        
+        inventoryItem.NumberItem = item.NumberItem;
 
         System.IO.File.WriteAllText(InventoryPath, JsonSerializer.Serialize(data, _jsonSerializerOptions));
 

@@ -4,15 +4,15 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Model
+namespace Model.Item
 {
     /// <summary>
     /// The item.
     /// </summary>
-    public class Item
+    public partial class Item: IEquatable<Item>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Item"/> class.
+        /// Initializes a new instance of the <see cref="Model.Item.Item"/> class.
         /// </summary>
         public Item()
         {
@@ -69,5 +69,22 @@ namespace Model
         /// Gets or sets the updated date.
         /// </summary>
         public DateTime? UpdatedDate { get; set; }
-    }
+
+        /// <summary>
+        /// Compare an item to this one.
+        /// </summary>
+        /// <param name="other">The item to compare.</param>
+        /// <returns>True if the item is equal, false otherwise.</returns>
+        public bool Equals(Item? other)
+            => other != null 
+               && (other.Id == 0 || Id == other.Id ? FullComparer.Equals(this, other) : Id == other.Id);
+
+        /// <summary>
+        /// Compare an object to this one.
+        /// </summary>
+        /// <param name="obj">The object to compare.</param>
+        /// <returns>True if the object is equal, false otherwise.</returns>
+        public override bool Equals(object? obj) 
+            => obj is Item item && Equals(item);
+        }
 }

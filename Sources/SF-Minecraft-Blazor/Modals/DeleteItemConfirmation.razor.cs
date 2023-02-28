@@ -1,7 +1,7 @@
 using Blazored.Modal;
 using Blazored.Modal.Services;
 using Microsoft.AspNetCore.Components;
-using Model;
+using Model.Item;
 using Model.Services;
 
 namespace SF_Minecraft_Blazor.Modals;

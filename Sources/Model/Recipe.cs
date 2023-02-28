@@ -14,7 +14,7 @@ namespace Model
         /// <summary>
         /// Gets or sets the give.
         /// </summary>
-        public Item Give { get; set; }
+        public Item.Item Give { get; set; }
 
         /// <summary>
         /// Gets or sets the have.

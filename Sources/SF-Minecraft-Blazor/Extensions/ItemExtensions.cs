@@ -1,4 +1,4 @@
-using Model;
+using Model.Item;
 using SF_Minecraft_Blazor.Entity;
 
 namespace SF_Minecraft_Blazor.Extensions;
