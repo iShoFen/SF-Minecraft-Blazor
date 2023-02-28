@@ -47,7 +47,9 @@ You can :
 - [ ] Websocket
 
 ## Examples
-![Items](Documentation/Images/item_list.png)
+<!-- https://codefirst.iut.uca.fr/git/samuel.sirven/SF-Minecraft-Blazor/src/branch/master/Documentation/images/item_list.png -->
+<!-- display this image -->
+![item_list](https://codefirst.iut.uca.fr/git/samuel.sirven/SF-Minecraft-Blazor/src/branch/master/Documentation/images/item_list.png)
 Here is the item list. You can add, edit or delete an item.  
 We also have a pagination system.
 
