@@ -1,22 +1,25 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>SF_Minecraft_Blazor</RootNamespace>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <RootNamespace>SF_Minecraft_Blazor</RootNamespace>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Blazored.Modal" Version="7.1.0" />
-    <PackageReference Include="Blazorise.Bootstrap" Version="1.2.1" />
-    <PackageReference Include="Blazorise.DataGrid" Version="1.2.1" />
-    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.2.1" />
-    <PackageReference Include="Blazorise.Snackbar" Version="1.2.1" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Blazored.Modal" Version="7.1.0"/>
+        <PackageReference Include="Blazorise.Bootstrap" Version="1.2.1"/>
+        <PackageReference Include="Blazorise.DataGrid" Version="1.2.1"/>
+        <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.2.1"/>
+        <PackageReference Include="Blazorise.Snackbar" Version="1.2.1"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\RestController\RestController.csproj" />
-  </ItemGroup>
-
+    <ItemGroup>
+        <ProjectReference Include="..\RestController\RestController.csproj"/>
+    </ItemGroup>
+    
+    <ItemGroup>
+        <Content Remove="appsettings.json;appsettings.Development.json" />
+    </ItemGroup>
 </Project>
