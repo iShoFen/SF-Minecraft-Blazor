@@ -12,11 +12,12 @@
     {
         @if (!string.IsNullOrWhiteSpace(Item.ImageBase64))
         {
-            <img src="data:" class="img-thumbnail img-preview-small" title="@Item.DisplayName" alt="@Item.DisplayName"/>
+            <img src="data:image/png;base64, @(Item.ImageBase64)" class="img-preview-small" title="@Item.DisplayName" alt="@Item.DisplayName"
+                 style="width: 100%;"/>
         }
         else
         {
-            <img src="images/default.png" class="img-thumbnail img-preview-small" title="@Item.DisplayName" alt="@Item.DisplayName"/>
+            <img src="images/default.png" class="img-preview-small" title="@Item.DisplayName" alt="@Item.DisplayName" style="width: 100%;"/>
         }
     }
 </div>

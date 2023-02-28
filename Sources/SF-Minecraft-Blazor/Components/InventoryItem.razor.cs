@@ -32,7 +32,7 @@ public partial class InventoryItem
     /// The parent component.
     /// </summary>
     [CascadingParameter]
-    public Item? CurrentDragItem { get; set; }
+    public Inventory Inventory { get; set; }
     
     [CascadingParameter]
     public List<InventoryEntity> Items { get; set; }
@@ -92,7 +92,7 @@ public partial class InventoryItem
             return;
         }
 
-        Item = CurrentDragItem;
+        Item = Inventory.CurrentDragItem;
     }
 
     /// <summary>
@@ -100,6 +100,6 @@ public partial class InventoryItem
     /// </summary>
     private void OnDragStart()
     {
-        CurrentDragItem = Item;
+        Inventory.CurrentDragItem = Item;
     }
 }
