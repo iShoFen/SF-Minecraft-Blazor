@@ -1,5 +1,5 @@
 using System.Net;
-using Model;
+using Model.Item;
 using Model.Services;
 
 namespace SF_Minecraft_Blazor.Services;
