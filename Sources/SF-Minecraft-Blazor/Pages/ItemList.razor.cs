@@ -4,7 +4,7 @@ using Blazored.Modal.Services;
 using Blazorise.DataGrid;
 using Blazorise.Snackbar;
 using Microsoft.AspNetCore.Components;
-using Model;
+using Model.Item;
 using Model.Services;
 using SF_Minecraft_Blazor.Modals;
 
@@ -20,11 +20,11 @@ public partial class ItemList
 
     private DataGrid<Item>? itemGrid;
 
-    private IEnumerable<Model.Item> Items { get; set; } = new List<Model.Item>();
+    private IEnumerable<Item> Items { get; set; } = new List<Item>();
 
     private int TotalItems { get; set; }
 
-    private async Task OnReadData(DataGridReadDataEventArgs<Model.Item> e)
+    private async Task OnReadData(DataGridReadDataEventArgs<Item> e)
     {
         if (e.CancellationToken.IsCancellationRequested) return;
 

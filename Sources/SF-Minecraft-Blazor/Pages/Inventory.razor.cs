@@ -1,73 +1,86 @@
 using Blazorise.DataGrid;
+using Blazorise.Snackbar;
+using Microsoft.AspNetCore.Components;
+using Model.Item;
+using Model.Services;
 
 namespace SF_Minecraft_Blazor.Pages;
 
 public partial class Inventory
 {
-    private List<Model.Item> Items { get; set; } = new()
-    {
-        new Model.Item
-        {
-            Id = 1,
-            DisplayName = "Diamond",
-            Name = "item1",
-            CreatedDate = DateTime.Now,
-            EnchantCategories = new List<string>(),
-            RepairWith = new List<string>(),
-            MaxDurability = 4,
-            StackSize = 45
-        },
-        new Model.Item
-        {
-            Id = 1,
-            DisplayName = "Dirt",
-            Name = "item1",
-            CreatedDate = DateTime.Now,
-            EnchantCategories = new List<string>(),
-            RepairWith = new List<string>(),
-            MaxDurability = 4,
-            StackSize = 45
-        },
-        new Model.Item
-        {
-            Id = 1,
-            DisplayName = "Stone",
-            Name = "item1",
-            CreatedDate = DateTime.Now,
-            EnchantCategories = new List<string>(),
-            RepairWith = new List<string>(),
-            MaxDurability = 4,
-            StackSize = 45
-        }
-    };
+    /// <summary>
+    /// Injected service for accessing the inventory data.
+    /// </summary>
+    [Inject] public IDataInventoryService DataInventoryService { get; set; }
+    
+    /// <summary>
+    /// Injected service for accessing the item data.
+    /// </summary>
+    [Inject] public IDataItemListService DataItemListService { get; set; }
+    
+    /// <summary>
+    /// The snackbar stack.
+    /// </summary>
+    [CascadingParameter] public SnackbarStack SnackbarStack { get; set; }
+    
+    /// <summary>
+    /// The data grid for the items.
+    /// </summary>
+    private DataGrid<Item> _itemGrid = null!;
+    
+    /// <summary>
+    /// The items to display.
+    /// </summary>
+    private List<Item> DisplayItems { get; set; } = new();
+    
+    /// <summary>
+    /// All the items.
+    /// </summary>
+    private List<Item> _items = new();
 
-    private int totalItems { get; set; }
-
+    /// <summary>
+    /// The total number of items.
+    /// </summary>
+    private int TotalItems { get; set; } = -1;
+    
+    /// <summary>
+    /// The search value query.
+    /// </summary>
     private string SearchValue { get; set; } = "";
-
-    private DataGrid<Model.Item> _dataGrid = null!;
-
-    public Inventory()
+    
+    private async Task OnReadData(DataGridReadDataEventArgs<Item> arg)
     {
-        totalItems = Items.Count;
-    }
-
-    private Task OnReadData(DataGridReadDataEventArgs<Model.Item> arg)
-    {
-        return Task.CompletedTask;
+        if (arg.CancellationToken.IsCancellationRequested) return;
+        
+        try
+        {
+            if (TotalItems == -1)
+            {
+                _items = (await DataItemListService.All()).ToList();
+                TotalItems = _items.Count;
+                DisplayItems = _items.Skip((arg.Page - 1) * arg.PageSize).Take(arg.PageSize).ToList();
+                await SnackbarStack.PushAsync("Data loaded successfully", SnackbarColor.Info);
+            }
+            else
+            {
+                var filteredItems = _items.Where(OnCustomFilter).ToList();
+                TotalItems = filteredItems.Count;
+                DisplayItems = filteredItems.Skip((arg.Page - 1) * arg.PageSize).Take(arg.PageSize).ToList();
+            }
+        }
+        catch (Exception)
+        {
+            await SnackbarStack.PushAsync("Cannot load data from data source", SnackbarColor.Danger);
+        }
     }
 
     private Task OnSearchRequested(string search)
     {
         SearchValue = search;
-        return _dataGrid.Reload();
+        return _itemGrid.Reload();
     }
 
-    private bool OnCustomFilter(Model.Item item)
-    {
-        if (string.IsNullOrEmpty(SearchValue))
-            return true;
-        return item.DisplayName.Contains(SearchValue, StringComparison.OrdinalIgnoreCase)
-               || item.Name.Contains(SearchValue, StringComparison.OrdinalIgnoreCase);
-    }
+    private bool OnCustomFilter(Item item) 
+        => string.IsNullOrEmpty(SearchValue) || item.DisplayName.StartsWith(SearchValue, StringComparison.OrdinalIgnoreCase);
+    
 }
