@@ -21,6 +21,8 @@ public partial class InventoryItem
     /// </summary>
     [Parameter]
     public Item? Item { get; set; }
+    
+    public int Count { get; set; }
 
     /// <summary>
     /// If the item can be dropped.
@@ -55,6 +57,7 @@ public partial class InventoryItem
                 try
                 {
                     Item = await DataItemListService.GetById(inventoryEntity.ItemId);
+                    Count = inventoryEntity.NumberItem;
                     await SnackbarStack.PushAsync($"Item {Item.DisplayName} loaded", SnackbarColor.Success);
                 }
                 catch (Exception e)
@@ -85,14 +88,34 @@ public partial class InventoryItem
     /// <summary>
     /// When dropping the item.
     /// </summary>
-    internal void OnDrop()
+    internal async Task OnDrop()
     {
         if (NoDrop)
         {
             return;
         }
 
-        Item = Inventory.CurrentDragItem;
+        var currentDragItem = Inventory.CurrentDragItem;
+
+        if (currentDragItem != null)
+        {
+            if (Item == null)
+            {
+                Item = currentDragItem.Item;
+                Count = currentDragItem.Count;
+            }
+            else
+            {
+                if (currentDragItem.Item.Id == Item?.Id)
+                {
+                    Count += currentDragItem.Count;
+                }
+                else
+                {
+                    await SnackbarStack.PushAsync("Cannot override item because it is not the same", SnackbarColor.Danger);
+                }  
+            }
+        }
     }
 
     /// <summary>
@@ -100,6 +123,11 @@ public partial class InventoryItem
     /// </summary>
     private void OnDragStart()
     {
-        Inventory.CurrentDragItem = Item;
+        Inventory.CurrentDragItem = new InventoryTransferItem
+        {
+            Item = Item!,
+            Count = Count,
+            Position = Index
+        };
     }
 }

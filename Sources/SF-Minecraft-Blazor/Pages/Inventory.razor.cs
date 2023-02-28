@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Model.Item;
 using Model.Services;
+using SF_Minecraft_Blazor.Entity;
 
 namespace SF_Minecraft_Blazor.Pages;
 
@@ -12,7 +13,7 @@ public partial class Inventory
     /// <summary>
     /// The current drag item.
     /// </summary>
-    public Item? CurrentDragItem { get; set; }
+    public InventoryTransferItem? CurrentDragItem { get; set; }
 
     /// <summary>
     /// Injected service for accessing the inventory data.
@@ -91,6 +92,11 @@ public partial class Inventory
 
     private void OnDragStart(Item item)
     {
-        CurrentDragItem = item;
+        CurrentDragItem = new InventoryTransferItem
+        {
+            Item = item,
+            Count = 1,
+            Position = -1
+        };
     }
 }

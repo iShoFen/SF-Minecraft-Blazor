@@ -1,6 +1,6 @@
 @using Model.Item
 <div
-    class="item"
+    class="col item"
     ondragover="event.preventDefault();"
     draggable="true"
     @ondragstart="@OnDragStart"
@@ -12,12 +12,14 @@
     {
         @if (!string.IsNullOrWhiteSpace(Item.ImageBase64))
         {
-            <img src="data:image/png;base64, @(Item.ImageBase64)" class="img-preview-small" title="@Item.DisplayName" alt="@Item.DisplayName"
-                 style="width: 100%;"/>
+            <img src="data:image/png;base64, @(Item.ImageBase64)" class="img-preview-small img-inventory-item"
+                 title="@Item.DisplayName" alt="@Item.DisplayName"/>
         }
         else
         {
-            <img src="images/default.png" class="img-preview-small" title="@Item.DisplayName" alt="@Item.DisplayName" style="width: 100%;"/>
+            <img src="images/default.png" class="img-preview-small img-inventory-item"
+                 title="@Item.DisplayName" alt="@Item.DisplayName"/>
         }
+        <span class="item-count">@Count</span>
     }
 </div>
