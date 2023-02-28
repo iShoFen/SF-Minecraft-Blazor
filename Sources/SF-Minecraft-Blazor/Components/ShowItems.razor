@@ -1,0 +1,11 @@
+@typeparam TItem
+
+<div>
+    @if ((Items?.Count ?? 0) != 0)
+    {
+        @foreach (var item in Items)
+        {
+            @ShowTemplate(item)
+        }
+    }
+</div>
