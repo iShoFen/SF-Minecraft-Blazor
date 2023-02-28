@@ -1,13 +1,31 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using SF_Minecraft_Blazor.Data;
+using Blazored.Modal;
+using Blazorise;
+using Blazorise.Bootstrap;
+using Blazorise.Icons.FontAwesome;
+using Model.Services;
+using SF_Minecraft_Blazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
+
+// Add Blazorise
+builder.Services
+    .AddBlazorise()
+    .AddBootstrapProviders()
+    .AddFontAwesomeIcons();
+
+builder.Services.AddBlazoredModal();
+
+builder.Services.AddScoped<HttpClient>(_ => new HttpClient
+{
+    BaseAddress = new Uri(builder.Configuration["ApiUrl"])
+});
+
+builder.Services.AddScoped<IDataItemListService, DataItemListService>();
+builder.Services.AddScoped<IDataInventoryService, DataInventoryService>();
 
 var app = builder.Build();
 

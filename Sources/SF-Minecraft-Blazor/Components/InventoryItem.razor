@@ -1,0 +1,22 @@
+@using Model.Item
+<div
+    class="item"
+    ondragover="event.preventDefault();"
+    draggable="true"
+    @ondragstart="@OnDragStart"
+    @ondrop="@OnDrop"
+    @ondragenter="@OnDragEnter"
+    @ondragleave="@OnDragLeave">
+
+    @if (Item != null)
+    {
+        @if (!string.IsNullOrWhiteSpace(Item.ImageBase64))
+        {
+            <img src="data:" class="img-thumbnail img-preview-small" title="@Item.DisplayName" alt="@Item.DisplayName"/>
+        }
+        else
+        {
+            <img src="images/default.png" class="img-thumbnail img-preview-small" title="@Item.DisplayName" alt="@Item.DisplayName"/>
+        }
+    }
+</div>
