@@ -10,8 +10,7 @@ namespace SF_Minecraft_Blazor.Pages;
 
 public partial class ItemAdd
 {
-    [Inject]
-    public IStringLocalizer<ItemAdd> Localizer { get; set; }
+    [Inject] public IStringLocalizer<ItemAdd> Localizer { get; set; }
     [Inject] public IDataItemListService DataService { get; set; }
 
     [Inject] public NavigationManager NavigationManager { get; set; }
@@ -46,7 +45,7 @@ public partial class ItemAdd
     {
         await DataService.Add(itemEntity.ToModel());
         NavigationManager.NavigateTo("items");
-        await SnackbarStack.PushAsync("Item added successfully", SnackbarColor.Success);
+        await SnackbarStack.PushAsync(Localizer["ItemAddedSuccesfully"], SnackbarColor.Success);
     }
 
     private async Task LoadImage(InputFileChangeEventArgs e)
