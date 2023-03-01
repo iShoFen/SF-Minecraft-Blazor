@@ -2,6 +2,7 @@ using Blazorise.DataGrid;
 using Blazorise.Snackbar;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.Localization;
 using Model.Item;
 using Model.Services;
 using SF_Minecraft_Blazor.Entity;
@@ -10,6 +11,9 @@ namespace SF_Minecraft_Blazor.Pages;
 
 public partial class Inventory
 {
+    [Inject]
+    public IStringLocalizer<Inventory> Localizer { get; set; }
+    
     /// <summary>
     /// The current drag item.
     /// </summary>

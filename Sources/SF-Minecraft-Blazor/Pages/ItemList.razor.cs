@@ -4,6 +4,7 @@ using Blazored.Modal.Services;
 using Blazorise.DataGrid;
 using Blazorise.Snackbar;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Localization;
 using Model.Item;
 using Model.Services;
 using SF_Minecraft_Blazor.Modals;
@@ -12,6 +13,9 @@ namespace SF_Minecraft_Blazor.Pages;
 
 public partial class ItemList
 {
+    [Inject]
+    public IStringLocalizer<ItemList> Localizer { get; set; }
+
     [Inject] public IDataItemListService DataItemListService { get; set; }
 
     [CascadingParameter] public SnackbarStack SnackbarStack { get; set; }
@@ -34,11 +38,14 @@ public partial class ItemList
             {
                 TotalItems = await DataItemListService.Count();
                 Items = await DataItemListService.List(e.Page, e.PageSize);
-                await SnackbarStack.PushAsync("Data loaded successfully", SnackbarColor.Info);
+                await SnackbarStack.PushAsync(Localizer["ItemsLoadedSuccessfully"], SnackbarColor.Info);
             }
             catch (Exception)
             {
-                await SnackbarStack.PushAsync("Cannot load data from data source", SnackbarColor.Danger);
+                if (SnackbarStack != null)
+                {
+                    await SnackbarStack.PushAsync(Localizer["CannotLoadItemsFromDataSource"], SnackbarColor.Danger);
+                }
             }
         }
     }
@@ -48,7 +55,7 @@ public partial class ItemList
         var parameters = new ModalParameters();
         parameters.Add(nameof(Item.Id), id);
 
-        var modal = Modal.Show<DeleteItemConfirmation>("Delete Confirmation", parameters);
+        var modal = Modal.Show<DeleteItemConfirmation>(Localizer["DeleteConfirmation"], parameters);
         var result = await modal.Result;
 
         if (result.Cancelled)
@@ -60,11 +67,11 @@ public partial class ItemList
         
         if (code == HttpStatusCode.OK)
         {
-            await SnackbarStack.PushAsync("Item deleted successfully", SnackbarColor.Success);
+            await SnackbarStack.PushAsync(Localizer["ItemDeleteSuccessfully"], SnackbarColor.Success);
         }
         else
         {
-            await SnackbarStack.PushAsync("Cannot delete item", SnackbarColor.Danger);
+            await SnackbarStack.PushAsync(Localizer["CannotDeleteItem"], SnackbarColor.Danger);
         }
         
 

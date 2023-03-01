@@ -5,9 +5,10 @@ namespace SF_Minecraft_Blazor.Shared;
 
 public partial class CultureSelector
 {
-    [Inject] public NavigationManager NavigationManager { get; set; }
+    [Inject] private NavigationManager NavigationManager { get; set; }
 
-    private CultureInfo[] supportedCultures = {
+    private IEnumerable<CultureInfo> supportedCultures = new List<CultureInfo>
+    {
         new("en-US"),
         new("fr-FR")
     };
@@ -17,16 +18,12 @@ public partial class CultureSelector
         get => CultureInfo.CurrentCulture;
         set
         {
-            if (CultureInfo.CurrentUICulture == value)
-            {
-                return;
-            }
+            if (CultureInfo.CurrentUICulture.Equals(value)) return;
 
             var culture = value.Name.ToLower(CultureInfo.InvariantCulture);
 
-            var redirectUri = new Uri(NavigationManager.Uri).GetComponents(UriComponents.PathAndQuery,
-                UriFormat.Unescaped);
-            var query = $"?culture={Uri.EscapeDataString(culture)}&" + $"redirectUri={Uri.EscapeDataString(redirectUri)}";
+            var uri = new Uri(NavigationManager.Uri).GetComponents(UriComponents.PathAndQuery, UriFormat.Unescaped);
+            var query = $"?culture={Uri.EscapeDataString(culture)}&" + $"redirectUri={Uri.EscapeDataString(uri)}";
 
             // Redirect the user to the culture controller to set the cookie
             NavigationManager.NavigateTo("/Culture/SetCulture" + query, forceLoad: true);

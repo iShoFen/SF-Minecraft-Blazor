@@ -1,6 +1,7 @@
 using Blazorise.Snackbar;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.Extensions.Localization;
 using Model.Services;
 using SF_Minecraft_Blazor.Entity;
 using SF_Minecraft_Blazor.Extensions;
@@ -9,6 +10,8 @@ namespace SF_Minecraft_Blazor.Pages;
 
 public partial class ItemAdd
 {
+    [Inject]
+    public IStringLocalizer<ItemAdd> Localizer { get; set; }
     [Inject] public IDataItemListService DataService { get; set; }
 
     [Inject] public NavigationManager NavigationManager { get; set; }

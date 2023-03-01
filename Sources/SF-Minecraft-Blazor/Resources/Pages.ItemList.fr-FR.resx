@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:element name="root" msdata:IsDataSet="true">
+            
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="ItemsLoadedSuccessfully" xml:space="preserve">
+        <value>Objets chargés avec succès</value>
+    </data>
+    <data name="DeleteConfirmation" xml:space="preserve">
+        <value>Confirmation de suppression</value>
+    </data>
+    <data name="CannotLoadItemsFromDataSource" xml:space="preserve">
+        <value>Impossible de charger les données</value>
+    </data>
+    <data name="ItemDeleteSuccessfully" xml:space="preserve">
+        <value>Objet supprimé avec succès</value>
+    </data>
+    <data name="CannotDeleteItem" xml:space="preserve">
+        <value>Impossible de supprimer l'objet</value>
+    </data>
+    <data name="Add" xml:space="preserve">
+        <value>Ajouter</value>
+    </data>
+    <data name="Update" xml:space="preserve">
+        <value>Modifier</value>
+    </data>
+    <data name="Delete" xml:space="preserve">
+        <value>Supprimer</value>
+    </data>
+    <data name="DisplayName" xml:space="preserve">
+        <value>Nom d'affichage</value>
+    </data>
+    <data name="StackSize" xml:space="preserve">
+        <value>Taille de la pile</value>
+    </data>
+    <data name="MaximumDurability" xml:space="preserve">
+        <value>Durabilité maximum</value>
+    </data>
+    <data name="EnchantCategories" xml:space="preserve">
+        <value>Catégories d'enchantements</value>
+    </data>
+    <data name="Image" xml:space="preserve">
+        <value>Image</value>
+    </data>
+    <data name="RepairWith" xml:space="preserve">
+        <value>Réparation avec</value>
+    </data>
+    <data name="CreatedDate" xml:space="preserve">
+        <value>Date de création</value>
+    </data>
+    <data name="Action" xml:space="preserve">
+        <value>Action</value>
+    </data>
+</root>

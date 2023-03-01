@@ -34,5 +34,26 @@
       <Compile Update="Components\MyInventory.razor.cs">
         <DependentUpon>MyInventory.razor</DependentUpon>
       </Compile>
+      <Compile Update="Resources\Pages.ItemList.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Pages.ItemList.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Resources\Pages.ItemList.fr-FR.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Pages.ItemList.fr-FR.resx</DependentUpon>
+      </Compile>
+    </ItemGroup>
+    
+    <ItemGroup>
+      <EmbeddedResource Update="Resources\Pages.ItemList.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>Pages.ItemList.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resources\Pages.ItemList.fr-FR.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>Pages.ItemList.fr-FR.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
     </ItemGroup>
 </Project>
