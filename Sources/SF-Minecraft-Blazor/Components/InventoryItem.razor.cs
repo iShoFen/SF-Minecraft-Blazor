@@ -29,12 +29,6 @@ public partial class InventoryItem
     public int Count { get; set; }
 
     /// <summary>
-    /// If the item can be dropped.
-    /// </summary>
-    [Parameter]
-    public bool NoDrop { get; set; }
-
-    /// <summary>
     /// The parent component.
     /// </summary>
     [CascadingParameter]
@@ -79,7 +73,6 @@ public partial class InventoryItem
     /// </summary>
     internal void OnDragEnter()
     {
-        if (NoDrop) return;
         if (Inventory.CurrentDragItem != null)
         {
             Inventory.CurrentDragItem.Position = Index;
@@ -91,7 +84,6 @@ public partial class InventoryItem
     /// </summary>
     internal void OnDragLeave()
     {
-        if (NoDrop) return;
         if (Inventory.CurrentDragItem != null)
         {
             Inventory.CurrentDragItem.Position = -1;
