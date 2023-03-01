@@ -2,6 +2,7 @@ using System.Net;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Moq.Protected;
 using Newtonsoft.Json.Linq;
@@ -93,4 +94,7 @@ public static class TestUtils
             Content = new StringContent("", Encoding.UTF8, "application/json")
         };
     }
+    
+    public static ILogger<T> CreateLogger<T>() 
+        => new Mock<ILogger<T>>().Object;
 }

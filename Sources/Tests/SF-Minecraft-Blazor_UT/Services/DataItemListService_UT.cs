@@ -328,7 +328,8 @@ public class DataItemListServiceUt
             TestUtils.GetHttpClientRead(
                 new CraftingController(),
                 "All",
-                "all"));
+                "all"),
+            TestUtils.CreateLogger<DataItemListService>());
         
         Assert.NotNull(service);
     }
@@ -342,7 +343,8 @@ public class DataItemListServiceUt
                 new CraftingController(),
                 "All",
                 "Crafting/all"
-            ));
+            ),
+            TestUtils.CreateLogger<DataItemListService>());
         var result = (await service.All()).ToList();
         
         Assert.Equal(expected.Count, result.Count);
@@ -358,7 +360,8 @@ public class DataItemListServiceUt
                 new CraftingController(),
                 "Count",
                 "Crafting/count"
-            ));
+            ),
+            TestUtils.CreateLogger<DataItemListService>());
         var result = await service.Count();
        
         Assert.Equal(expected, result);
@@ -375,7 +378,8 @@ public class DataItemListServiceUt
                 $"Crafting/?currentPage={page}&pageSize={pageSize}",
                 page,
                 pageSize
-            ));
+            ),
+            TestUtils.CreateLogger<DataItemListService>());
         var result = (await service.List(page, pageSize)).ToList();
         
         Assert.Equal(expected.Count, result.Count);
@@ -392,7 +396,8 @@ public class DataItemListServiceUt
                 "GetById",
                 $"Crafting/{id}",
                 id
-            ));
+            ),
+            TestUtils.CreateLogger<DataItemListService>());
 
         
         if (expected is null)
@@ -415,7 +420,8 @@ public class DataItemListServiceUt
                 "GetByName",
                 $"Crafting/by-name/{name}",
                 name
-            ));
+            ),
+            TestUtils.CreateLogger<DataItemListService>());
 
         
         if (expected is null)
@@ -440,7 +446,8 @@ public class DataItemListServiceUt
                "Crafting/",
                typeof(Item),
                item
-            ));
+            ),
+            TestUtils.CreateLogger<DataItemListService>());
         
         await service.Add(item);
         
@@ -462,7 +469,8 @@ public class DataItemListServiceUt
                 $"Crafting/{id}",
                 typeof(int),
                 id
-            ));
+            ),
+            TestUtils.CreateLogger<DataItemListService>());
 
         HttpStatusCode result;
         if (!expected)
@@ -493,7 +501,8 @@ public class DataItemListServiceUt
                 typeof(Item),
                 id,
                 updatedItem
-            ));
+            ),
+            TestUtils.CreateLogger<DataItemListService>());
         
         HttpStatusCode result;
         if (!isNotFail)
@@ -526,7 +535,8 @@ public class DataItemListServiceUt
                 controller,
                 "ResetItems",
                 "Crafting/reset-items"
-            ));
+            ),
+            TestUtils.CreateLogger<DataItemListService>());
         
         await service.ResetItems();
         var result = await controller.All();
