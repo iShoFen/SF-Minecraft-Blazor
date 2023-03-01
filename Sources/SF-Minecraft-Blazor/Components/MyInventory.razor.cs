@@ -14,6 +14,11 @@ namespace SF_Minecraft_Blazor.Components;
 public partial class MyInventory
 {
     /// <summary>
+    /// The actions.
+    /// </summary>
+    public ObservableCollection<InventoryAction> Actions { get; set; } = new();
+
+    /// <summary>
     /// All the items.
     /// </summary>
     public List<InventoryEntity> Items { get; set; }
@@ -22,19 +27,35 @@ public partial class MyInventory
 
     [CascadingParameter] public SnackbarStack SnackbarStack { get; set; }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    /// <summary>
+    /// Gets or sets the java script runtime.
+    /// </summary>
+    [Inject]
+    internal IJSRuntime JavaScriptRuntime { get; set; }
+
+    public MyInventory()
     {
-        if (!firstRender) return;
+        Actions.CollectionChanged += OnActionsCollectionChanged;
+    }
 
-        await base.OnAfterRenderAsync(firstRender);
+    private void OnActionsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        JavaScriptRuntime.InvokeVoidAsync("MyInventory.AddActions", e.NewItems);
+    }
 
+    protected override async Task OnInitializedAsync()
+    {
         try
         {
             Items = (await DataInventoryService.GetInventory()).Select(item => item.ToEntity()).ToList();
+            await SnackbarStack.PushAsync("Inventory loaded", SnackbarColor.Info);
         }
         catch (Exception)
         {
-            await SnackbarStack.PushAsync("Cannot load inventory from data source", SnackbarColor.Danger);
+            if (SnackbarStack != null)
+            {
+                await SnackbarStack.PushAsync("Cannot load inventory from data source", SnackbarColor.Danger);
+            }
         }
     }
 }

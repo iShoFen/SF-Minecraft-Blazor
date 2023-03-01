@@ -1,9 +1,14 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">SF-Minecraft-Blazor</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+﻿<div class="top-row navbar navbar-dark">
+    <div class="container-fluid gap-1 justify-content-center">
+        <div class="row">
+            <a class="navbar-brand text-center" href="">SF-Minecraft-Blazor</a>
+            <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+        <div class="row justify-content-center mb-3">
+            <CultureSelector/>
+        </div>
     </div>
 </div>
 
@@ -36,4 +41,5 @@
     {
         collapseNavMenu = !collapseNavMenu;
     }
+
 }

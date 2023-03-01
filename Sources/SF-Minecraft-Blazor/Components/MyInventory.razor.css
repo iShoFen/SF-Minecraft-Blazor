@@ -4,3 +4,9 @@
     display: grid;
     width: 286px;
 }
+
+.actions {
+    border: 1px solid black;
+    height: 250px;
+    overflow: scroll;
+}
