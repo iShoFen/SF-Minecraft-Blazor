@@ -25,12 +25,6 @@
     </ItemGroup>
     
     <ItemGroup>
-      <None Update="Components\InventoryItem.razor.css">
-        <DependentUpon>InventoryItem.razor</DependentUpon>
-      </None>
-    </ItemGroup>
-    
-    <ItemGroup>
       <EmbeddedResource Update="Resources\Pages.ItemList.resx">
         <Generator>ResXFileCodeGenerator</Generator>
         <LastGenOutput>Pages.ItemList.Designer.cs</LastGenOutput>
@@ -46,6 +40,10 @@
       <EmbeddedResource Update="Resources\Pages.ItemAdd.fr-FR.resx">
         <Generator>ResXFileCodeGenerator</Generator>
         <LastGenOutput>Pages.ItemAdd.fr-FR.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resources\Pages.Inventory.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>Pages.Inventory.Designer.cs</LastGenOutput>
       </EmbeddedResource>
     </ItemGroup>
 </Project>

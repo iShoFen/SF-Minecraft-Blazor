@@ -70,7 +70,7 @@ public partial class Inventory
                 _items = (await DataItemListService.All()).ToList();
                 TotalItems = _items.Count;
                 DisplayItems = _items.Skip((arg.Page - 1) * arg.PageSize).Take(arg.PageSize).ToList();
-                await SnackbarStack.PushAsync("Data loaded successfully", SnackbarColor.Info);
+                await SnackbarStack.PushAsync(Localizer["ItemsLoadedSuccessfully"], SnackbarColor.Info);
             }
             else
             {
@@ -81,7 +81,7 @@ public partial class Inventory
         }
         catch (Exception)
         {
-            await SnackbarStack.PushAsync("Cannot load data from data source", SnackbarColor.Danger);
+            await SnackbarStack.PushAsync(Localizer["CannotLoadDataFromDataSource"], SnackbarColor.Danger);
         }
     }
 
