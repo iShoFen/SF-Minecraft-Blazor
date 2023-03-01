@@ -33,6 +33,9 @@ public partial class InventoryItem
     /// </summary>
     [CascadingParameter]
     public Inventory Inventory { get; set; }
+    
+    [CascadingParameter]
+    public MyInventory MyInventory { get; set; }
 
     [CascadingParameter] public List<InventoryEntity> Items { get; set; }
 
@@ -75,6 +78,7 @@ public partial class InventoryItem
     {
         if (Inventory.CurrentDragItem != null)
         {
+            MyInventory.Actions.Add(new InventoryAction { Action = "Drag Enter", Item = Item, Index = Index });
             Inventory.CurrentDragItem.Position = Index;
         }
     }
@@ -86,6 +90,7 @@ public partial class InventoryItem
     {
         if (Inventory.CurrentDragItem != null)
         {
+            MyInventory.Actions.Add(new InventoryAction { Action = "Drag Leave", Item = Item, Index = Index });
             Inventory.CurrentDragItem.Position = -1;
         }
     }
@@ -99,6 +104,7 @@ public partial class InventoryItem
 
         if (currentDragItem != null)
         {
+            MyInventory.Actions.Add(new InventoryAction { Action = "Drop", Item = Item, Index = Index });
             Inventory.CurrentDragItem!.Position = Index;
             if (currentDragItem.StartPosition == Index) return;
 
@@ -180,6 +186,7 @@ public partial class InventoryItem
     {
         if (Item != null)
         {
+            MyInventory.Actions.Add(new InventoryAction { Action = "Drag Start", Item = Item, Index = Index });
             Inventory.CurrentDragItem = new InventoryTransferItem
             {
                 Item = Item,
@@ -201,6 +208,7 @@ public partial class InventoryItem
 
         if (currentDragItem.DeleteStartItem)
         {
+            MyInventory.Actions.Add(new InventoryAction { Action = "Drag End", Item = Item, Index = Index });
             try
             {
                 // case when OnDrop was not triggered
