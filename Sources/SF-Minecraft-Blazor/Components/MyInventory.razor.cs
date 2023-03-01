@@ -52,7 +52,10 @@ public partial class MyInventory
         }
         catch (Exception)
         {
-            await SnackbarStack.PushAsync("Cannot load inventory from data source", SnackbarColor.Danger);
+            if (SnackbarStack != null)
+            {
+                await SnackbarStack.PushAsync("Cannot load inventory from data source", SnackbarColor.Danger);
+            }
         }
     }
 }

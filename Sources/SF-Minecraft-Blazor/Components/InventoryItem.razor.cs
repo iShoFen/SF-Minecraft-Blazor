@@ -33,9 +33,8 @@ public partial class InventoryItem
     /// </summary>
     [CascadingParameter]
     public Inventory Inventory { get; set; }
-    
-    [CascadingParameter]
-    public MyInventory MyInventory { get; set; }
+
+    [CascadingParameter] public MyInventory MyInventory { get; set; }
 
     [CascadingParameter] public List<InventoryEntity> Items { get; set; }
 
@@ -64,8 +63,12 @@ public partial class InventoryItem
                 }
                 catch (Exception e)
                 {
-                    await SnackbarStack.PushAsync($"Cannot load item with id {inventoryEntity.ItemId} from data source",
-                        SnackbarColor.Danger);
+                    if (SnackbarStack != null)
+                    {
+                        await SnackbarStack.PushAsync(
+                            $"Cannot load item with id {inventoryEntity.ItemId} from data source",
+                            SnackbarColor.Danger);
+                    }
                 }
             }
         }
@@ -155,27 +158,23 @@ public partial class InventoryItem
                     }
                     catch (Exception e)
                     {
-                        await SnackbarStack.PushAsync("Error while updating inventory",
-                            SnackbarColor.Danger);
+                        if (SnackbarStack != null)
+                        {
+                            await SnackbarStack.PushAsync("Error while updating inventory",
+                                SnackbarColor.Danger);
+                        }
                     }
                 }
                 else
                 {
                     currentDragItem.DeleteStartItem = false;
-                    await SnackbarStack.PushAsync("Cannot override item because it is not the same",
-                        SnackbarColor.Danger);
+                    if (SnackbarStack != null)
+                    {
+                        await SnackbarStack.PushAsync("Cannot override item because it is not the same",
+                            SnackbarColor.Danger);
+                    }
                 }
             }
-
-            // try
-            // {
-            //     await DataInventoryService.DeleteFromInventory(currentDragItem.StartPosition);
-            // }
-            // catch (Exception e)
-            // {
-            //     await SnackbarStack.PushAsync(
-            //         $"Error while transfer item from {currentDragItem.StartPosition} to {Index}", SnackbarColor.Danger);
-            // }
         }
     }
 
@@ -221,8 +220,11 @@ public partial class InventoryItem
             }
             catch (Exception e)
             {
-                await SnackbarStack.PushAsync("Error while deleting inventory",
-                    SnackbarColor.Danger);
+                if (SnackbarStack != null)
+                {
+                    await SnackbarStack.PushAsync("Error while deleting inventory",
+                        SnackbarColor.Danger);
+                }
             }
         }
 
