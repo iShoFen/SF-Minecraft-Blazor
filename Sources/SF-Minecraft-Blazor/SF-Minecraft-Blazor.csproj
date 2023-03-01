@@ -14,10 +14,46 @@
         <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.2.1" />
         <PackageReference Include="Blazorise.Snackbar" Version="1.2.1" />
         <PackageReference Include="NLog.Web.AspNetCore" Version="5.2.2" />
+        <PackageReference Include="Microsoft.Extensions.Localization" Version="7.0.3" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\RestController\RestController.csproj" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <Content Remove="appsettings.json;appsettings.Development.json" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <EmbeddedResource Update="Resources\Pages.ItemList.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>Pages.ItemList.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resources\Pages.ItemList.fr-FR.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>Pages.ItemList.fr-FR.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resources\Pages.ItemAdd.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>Pages.ItemAdd.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resources\Pages.ItemAdd.fr-FR.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>Pages.ItemAdd.fr-FR.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resources\Pages.Inventory.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>Pages.Inventory.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resources\Pages.ItemEdit.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>Pages.ItemEdit.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resources\Pages.ItemEdit.fr-FR.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>Pages.ItemEdit.fr-FR.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
     </ItemGroup>
     
     <ItemGroup>
@@ -27,8 +63,15 @@
     </ItemGroup>
     
     <ItemGroup>
-      <Compile Update="Components\MyInventory.razor.cs">
-        <DependentUpon>MyInventory.razor</DependentUpon>
+      <Compile Update="Resources\Pages.ItemEdit.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Pages.ItemEdit.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Resources\Pages.ItemEdit.fr-FR.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Pages.ItemEdit.fr-FR.resx</DependentUpon>
       </Compile>
     </ItemGroup>
 </Project>

@@ -1,6 +1,6 @@
 @page "/items/add"
 
-<h3>ItemAdd</h3>
+<h3>@Localizer["Title"]</h3>
 
 <EditForm Model="@itemEntity" OnValidSubmit="@HandleValidSubmit">
     <DataAnnotationsValidator />
@@ -8,30 +8,30 @@
 
     <p>
         <label for="display-name">
-            Display name:
+            @Localizer["DisplayName"]:
             <InputText id="display-name" @bind-Value="itemEntity.DisplayName" />
         </label>
     </p>
     <p>
         <label for="name">
-            Name:
+            @Localizer["Name"]:
             <InputText id="name" @bind-Value="itemEntity.Name" />
         </label>
     </p>
     <p>
         <label for="stack-size">
-            Stack size:
+            @Localizer["StackSize"]:
             <InputNumber id="stack-size" TValue="int" @bind-Value="itemEntity.StackSize" />
         </label>
     </p>
     <p>
         <label for="max-durability">
-            Max durability:
+            @Localizer["MaxDurability"]:
             <InputNumber id="max-durability" TValue="int" @bind-Value="itemEntity.MaxDurability" />
         </label>
     </p>
     <p>
-        Enchant categories:
+        @Localizer["EnchantCategories"]:
         <div>
             @foreach (var item in enchantCategories)
             {
@@ -42,7 +42,7 @@
         </div>
     </p>
     <p>
-        Repair with:
+        @Localizer["RepairWith"]:
         <div>
             @foreach (var item in repairWith)
             {
@@ -54,16 +54,16 @@
     </p>
     <p>
         <label>
-            Item image:
+            @Localizer["Image"]:
             <InputFile OnChange="@LoadImage" accept=".png" />
         </label>
     </p>
     <p>
         <label>
-            Accept Condition:
+            @Localizer["AcceptConditions"]:
             <InputCheckbox @bind-Value="itemEntity.AcceptTerms" />
         </label>
     </p>
 
-    <button type="submit">Submit</button>
+    <button type="submit">@Localizer["Submit"]</button>
 </EditForm>

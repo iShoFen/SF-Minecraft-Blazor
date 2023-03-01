@@ -1,6 +1,7 @@
 using Blazorise.Snackbar;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.Extensions.Localization;
 using Model.Services;
 using SF_Minecraft_Blazor.Entity;
 using SF_Minecraft_Blazor.Extensions;
@@ -9,6 +10,8 @@ namespace SF_Minecraft_Blazor.Pages;
 
 public partial class ItemEdit
 {
+    [Inject]
+    public IStringLocalizer<ItemEdit> Localizer { get; set; }
     [Inject] public IDataItemListService DataItemListService { get; set; }
 
     [Inject] public NavigationManager NavigationManager { get; set; }
@@ -54,11 +57,11 @@ public partial class ItemEdit
 
             StateHasChanged();
 
-            await SnackbarStack.PushAsync($"The item with {Id} has been successfully loaded", SnackbarColor.Info);
+            await SnackbarStack.PushAsync(@Localizer["ItemSuccessfullyLoaded"], SnackbarColor.Info);
         }
         catch (Exception e)
         {
-            await SnackbarStack.PushAsync($"Cannot get the item with id {Id} ", SnackbarColor.Danger);
+            await SnackbarStack.PushAsync($"{Localizer["CannotGetItem"]} {Id}", SnackbarColor.Danger);
         }
     }
 
@@ -66,7 +69,7 @@ public partial class ItemEdit
     {
         await DataItemListService.Update(itemEntity.Id, itemEntity.ToModel());
         NavigationManager.NavigateTo("items");
-        await SnackbarStack.PushAsync("Item updated successfully", SnackbarColor.Success);
+        await SnackbarStack.PushAsync(Localizer["ItemUpdatedSuccessfully"], SnackbarColor.Success);
     }
 
     private async Task LoadImage(InputFileChangeEventArgs e)

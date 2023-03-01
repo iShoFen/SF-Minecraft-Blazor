@@ -2,6 +2,7 @@ using Blazorise.DataGrid;
 using Blazorise.Snackbar;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.Localization;
 using Model.Item;
 using Model.Services;
 using SF_Minecraft_Blazor.Entity;
@@ -10,6 +11,9 @@ namespace SF_Minecraft_Blazor.Pages;
 
 public partial class Inventory
 {
+    [Inject]
+    public IStringLocalizer<Inventory> Localizer { get; set; }
+    
     /// <summary>
     /// The current drag item.
     /// </summary>
@@ -18,33 +22,37 @@ public partial class Inventory
     /// <summary>
     /// Injected service for accessing the inventory data.
     /// </summary>
-    [Inject] public IDataInventoryService DataInventoryService { get; set; }
-    
+    [Inject]
+    public IDataInventoryService DataInventoryService { get; set; }
+
     /// <summary>
     /// Injected service for accessing the item data.
     /// </summary>
-    [Inject] public IDataItemListService DataItemListService { get; set; }
-    
+    [Inject]
+    public IDataItemListService DataItemListService { get; set; }
+
     /// <summary>
     /// Injected logger.
     /// </summary>
-    [Inject] public ILogger<Inventory> Logger { get; set; }
+    [Inject]
+    public ILogger<Inventory> Logger { get; set; }
 
     /// <summary>
     /// The snackbar stack.
     /// </summary>
-    [CascadingParameter] public SnackbarStack SnackbarStack { get; set; }
-    
+    [CascadingParameter]
+    public SnackbarStack SnackbarStack { get; set; }
+
     /// <summary>
     /// The data grid for the items.
     /// </summary>
     private DataGrid<Item> _itemGrid = null!;
-    
+
     /// <summary>
     /// The items to display.
     /// </summary>
     private List<Item> DisplayItems { get; set; } = new();
-    
+
     /// <summary>
     /// All the items.
     /// </summary>
@@ -54,16 +62,16 @@ public partial class Inventory
     /// The total number of items.
     /// </summary>
     private int TotalItems { get; set; } = -1;
-    
+
     /// <summary>
     /// The search value query.
     /// </summary>
     private string SearchValue { get; set; } = "";
-    
+
     private async Task OnReadData(DataGridReadDataEventArgs<Item> arg)
     {
         if (arg.CancellationToken.IsCancellationRequested) return;
-        
+
         try
         {
             if (TotalItems == -1)
@@ -71,7 +79,7 @@ public partial class Inventory
                 _items = (await DataItemListService.All()).ToList();
                 TotalItems = _items.Count;
                 DisplayItems = _items.Skip((arg.Page - 1) * arg.PageSize).Take(arg.PageSize).ToList();
-                await SnackbarStack.PushAsync("Data loaded successfully", SnackbarColor.Info);
+                await SnackbarStack.PushAsync(Localizer["ItemsLoadedSuccessfully"], SnackbarColor.Info);
             }
             else
             {
@@ -82,7 +90,10 @@ public partial class Inventory
         }
         catch (Exception)
         {
-            await SnackbarStack.PushAsync("Cannot load data from data source", SnackbarColor.Danger);
+            if (SnackbarStack != null)
+            {
+                await SnackbarStack.PushAsync(Localizer["CannotLoadDataFromDataSource"], SnackbarColor.Danger);
+            }
         }
     }
 
@@ -93,8 +104,9 @@ public partial class Inventory
         return _itemGrid.Reload();
     }
 
-    private bool OnCustomFilter(Item item) 
-        => string.IsNullOrEmpty(SearchValue) || item.DisplayName.StartsWith(SearchValue, StringComparison.OrdinalIgnoreCase);
+    private bool OnCustomFilter(Item item)
+        => string.IsNullOrEmpty(SearchValue) ||
+           item.DisplayName.StartsWith(SearchValue, StringComparison.OrdinalIgnoreCase);
 
     private void OnDragStart(Item item)
     {
