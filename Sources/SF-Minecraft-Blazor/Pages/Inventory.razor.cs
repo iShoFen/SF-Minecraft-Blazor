@@ -26,6 +26,11 @@ public partial class Inventory
     [Inject] public IDataItemListService DataItemListService { get; set; }
     
     /// <summary>
+    /// Injected logger.
+    /// </summary>
+    [Inject] public ILogger<Inventory> Logger { get; set; }
+
+    /// <summary>
     /// The snackbar stack.
     /// </summary>
     [CascadingParameter] public SnackbarStack SnackbarStack { get; set; }
@@ -84,6 +89,7 @@ public partial class Inventory
     private Task OnSearchRequested(string search)
     {
         SearchValue = search;
+        Logger.LogInformation("Search requested: {SearchValue}", SearchValue);
         return _itemGrid.Reload();
     }
 
