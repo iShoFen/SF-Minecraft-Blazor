@@ -31,5 +31,10 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\Model\Model.csproj" />
 	</ItemGroup>
+
+        <ItemGroup>
+            <Content Remove="appsettings.json;appsettings.Development.json" />
+        </ItemGroup>
+        
     
 </Project>
