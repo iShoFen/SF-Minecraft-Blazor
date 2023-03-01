@@ -1,6 +1,10 @@
+using System.Net;
 using System.Reflection.Metadata;
+using Blazorise;
 using Blazorise.Snackbar;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using Model.Inventory;
 using Model.Item;
 using Model.Services;
 using SF_Minecraft_Blazor.Entity;
@@ -22,22 +26,22 @@ public partial class InventoryItem
     [Parameter]
     public Item? Item { get; set; }
 
-    /// <summary>
-    /// If the item can be dropped.
-    /// </summary>
-    [Parameter]
-    public bool NoDrop { get; set; }
+    public int Count { get; set; }
 
     /// <summary>
     /// The parent component.
     /// </summary>
     [CascadingParameter]
-    public Item? CurrentDragItem { get; set; }
+    public Inventory Inventory { get; set; }
     
     [CascadingParameter]
-    public List<InventoryEntity> Items { get; set; }
+    public MyInventory MyInventory { get; set; }
+
+    [CascadingParameter] public List<InventoryEntity> Items { get; set; }
 
     [Inject] public IDataItemListService DataItemListService { get; set; }
+
+    [Inject] public IDataInventoryService DataInventoryService { get; set; }
 
     [CascadingParameter] public SnackbarStack SnackbarStack { get; set; }
 
@@ -55,6 +59,7 @@ public partial class InventoryItem
                 try
                 {
                     Item = await DataItemListService.GetById(inventoryEntity.ItemId);
+                    Count = inventoryEntity.NumberItem;
                     await SnackbarStack.PushAsync($"Item {Item.DisplayName} loaded", SnackbarColor.Success);
                 }
                 catch (Exception e)
@@ -71,7 +76,11 @@ public partial class InventoryItem
     /// </summary>
     internal void OnDragEnter()
     {
-        if (NoDrop) return;
+        if (Inventory.CurrentDragItem != null)
+        {
+            MyInventory.Actions.Add(new InventoryAction { Action = "Drag Enter", Item = Item, Index = Index });
+            Inventory.CurrentDragItem.Position = Index;
+        }
     }
 
     /// <summary>
@@ -79,20 +88,95 @@ public partial class InventoryItem
     /// </summary>
     internal void OnDragLeave()
     {
-        if (NoDrop) return;
+        if (Inventory.CurrentDragItem != null)
+        {
+            MyInventory.Actions.Add(new InventoryAction { Action = "Drag Leave", Item = Item, Index = Index });
+            Inventory.CurrentDragItem.Position = -1;
+        }
     }
 
     /// <summary>
     /// When dropping the item.
     /// </summary>
-    internal void OnDrop()
+    internal async Task OnDrop()
     {
-        if (NoDrop)
-        {
-            return;
-        }
+        var currentDragItem = Inventory.CurrentDragItem;
 
-        Item = CurrentDragItem;
+        if (currentDragItem != null)
+        {
+            MyInventory.Actions.Add(new InventoryAction { Action = "Drop", Item = Item, Index = Index });
+            Inventory.CurrentDragItem!.Position = Index;
+            if (currentDragItem.StartPosition == Index) return;
+
+            if (Item == null)
+            {
+                Item = currentDragItem.Item;
+                Count = currentDragItem.Count;
+                try
+                {
+                    await DataInventoryService.AddToInventory(new InventoryModel
+                    {
+                        Position = Index,
+                        ItemId = Item.Id,
+                        NumberItem = Count
+                    });
+                    await SnackbarStack.PushAsync($"The item {Item.DisplayName} was added successfully",
+                        SnackbarColor.Success);
+                }
+                catch (Exception e)
+                {
+                    await SnackbarStack.PushAsync("Error while updating inventory",
+                        SnackbarColor.Danger);
+                }
+            }
+            else
+            {
+                if (currentDragItem.Item.Id == Item?.Id)
+                {
+                    Count += currentDragItem.Count;
+                    try
+                    {
+                        var result = await DataInventoryService.UpdateInventory(new InventoryModel
+                        {
+                            Position = Index,
+                            ItemId = Item.Id,
+                            NumberItem = Count
+                        });
+                        if (result == HttpStatusCode.OK)
+                        {
+                            await SnackbarStack.PushAsync($"The item {Item.DisplayName} was updated successfully",
+                                SnackbarColor.Success);
+                        }
+                        else
+                        {
+                            await SnackbarStack.PushAsync("Error while updating inventory",
+                                SnackbarColor.Danger);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        await SnackbarStack.PushAsync("Error while updating inventory",
+                            SnackbarColor.Danger);
+                    }
+                }
+                else
+                {
+                    currentDragItem.DeleteStartItem = false;
+                    await SnackbarStack.PushAsync("Cannot override item because it is not the same",
+                        SnackbarColor.Danger);
+                }
+            }
+
+            // try
+            // {
+            //     await DataInventoryService.DeleteFromInventory(currentDragItem.StartPosition);
+            // }
+            // catch (Exception e)
+            // {
+            //     await SnackbarStack.PushAsync(
+            //         $"Error while transfer item from {currentDragItem.StartPosition} to {Index}", SnackbarColor.Danger);
+            // }
+        }
     }
 
     /// <summary>
@@ -100,6 +184,48 @@ public partial class InventoryItem
     /// </summary>
     private void OnDragStart()
     {
-        CurrentDragItem = Item;
+        if (Item != null)
+        {
+            MyInventory.Actions.Add(new InventoryAction { Action = "Drag Start", Item = Item, Index = Index });
+            Inventory.CurrentDragItem = new InventoryTransferItem
+            {
+                Item = Item,
+                Count = Count,
+                Position = Index,
+                StartPosition = Index,
+                DeleteStartItem = true
+            };
+        }
+    }
+
+    private async Task OnDragEnd()
+    {
+        var currentDragItem = Inventory.CurrentDragItem;
+
+        if (currentDragItem == null
+            || (currentDragItem.StartPosition == currentDragItem.Position
+                && Index == currentDragItem.StartPosition)) return;
+
+        if (currentDragItem.DeleteStartItem)
+        {
+            MyInventory.Actions.Add(new InventoryAction { Action = "Drag End", Item = Item, Index = Index });
+            try
+            {
+                // case when OnDrop was not triggered
+                await DataInventoryService.DeleteFromInventory(currentDragItem.StartPosition);
+
+                await SnackbarStack.PushAsync($"The item {Item!.DisplayName} was deleted successfully",
+                    SnackbarColor.Success);
+
+                Item = null;
+            }
+            catch (Exception e)
+            {
+                await SnackbarStack.PushAsync("Error while deleting inventory",
+                    SnackbarColor.Danger);
+            }
+        }
+
+        Inventory.CurrentDragItem = null;
     }
 }
