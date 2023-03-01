@@ -57,11 +57,11 @@ public partial class ItemEdit
 
             StateHasChanged();
 
-            await SnackbarStack.PushAsync($"The item with {Id} has been successfully loaded", SnackbarColor.Info);
+            await SnackbarStack.PushAsync(@Localizer["ItemSuccessfullyLoaded"], SnackbarColor.Info);
         }
         catch (Exception e)
         {
-            await SnackbarStack.PushAsync($"Cannot get the item with id {Id} ", SnackbarColor.Danger);
+            await SnackbarStack.PushAsync($"{Localizer["CannotGetItem"]} {Id}", SnackbarColor.Danger);
         }
     }
 
@@ -69,7 +69,7 @@ public partial class ItemEdit
     {
         await DataItemListService.Update(itemEntity.Id, itemEntity.ToModel());
         NavigationManager.NavigateTo("items");
-        await SnackbarStack.PushAsync("Item updated successfully", SnackbarColor.Success);
+        await SnackbarStack.PushAsync(Localizer["ItemUpdatedSuccessfully"], SnackbarColor.Success);
     }
 
     private async Task LoadImage(InputFileChangeEventArgs e)
