@@ -1,7 +1,10 @@
+using System.Globalization;
 using Blazored.Modal;
 using Blazorise;
 using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.Options;
 using Model.Services;
 using SF_Minecraft_Blazor.Services;
 
@@ -18,6 +21,23 @@ builder.Services
     .AddFontAwesomeIcons();
 
 builder.Services.AddBlazoredModal();
+
+// Add the controller of the app
+builder.Services.AddControllers();
+
+// Add the localization to the app and specify the resources path
+builder.Services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
+
+// Configure the localtization
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    // Set the default culture of the web site
+    options.DefaultRequestCulture = new RequestCulture(new CultureInfo("en-US"));
+    
+    // Declare the supported culture
+    options.SupportedCultures = new List<CultureInfo> { new("en-US"), new("fr-FR") };
+    options.SupportedUICultures = new List<CultureInfo> { new("en-US"), new("fr-FR") };
+});
 
 builder.Services.AddScoped<HttpClient>(_ => new HttpClient
 {
@@ -42,6 +62,21 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+// Get the current localization options
+var options = ((IApplicationBuilder)app).ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
+
+if (options?.Value != null)
+{
+    // use the default localization
+    app.UseRequestLocalization(options.Value);
+}
+
+// Add the controller to the endpoint
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
