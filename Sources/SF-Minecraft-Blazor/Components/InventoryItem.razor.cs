@@ -1,7 +1,9 @@
 using System.Net;
 using System.Reflection.Metadata;
+using Blazorise;
 using Blazorise.Snackbar;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Model.Inventory;
 using Model.Item;
 using Model.Services;
@@ -78,6 +80,10 @@ public partial class InventoryItem
     internal void OnDragEnter()
     {
         if (NoDrop) return;
+        if (Inventory.CurrentDragItem != null)
+        {
+            Inventory.CurrentDragItem.Position = Index;
+        }
     }
 
     /// <summary>
@@ -86,6 +92,10 @@ public partial class InventoryItem
     internal void OnDragLeave()
     {
         if (NoDrop) return;
+        if (Inventory.CurrentDragItem != null)
+        {
+            Inventory.CurrentDragItem.Position = -1;
+        }
     }
 
     /// <summary>
@@ -93,15 +103,13 @@ public partial class InventoryItem
     /// </summary>
     internal async Task OnDrop()
     {
-        if (NoDrop)
-        {
-            return;
-        }
-
         var currentDragItem = Inventory.CurrentDragItem;
 
         if (currentDragItem != null)
         {
+            Inventory.CurrentDragItem!.Position = Index;
+            if (currentDragItem.StartPosition == Index) return;
+
             if (Item == null)
             {
                 Item = currentDragItem.Item;
@@ -155,10 +163,21 @@ public partial class InventoryItem
                 }
                 else
                 {
+                    currentDragItem.DeleteStartItem = false;
                     await SnackbarStack.PushAsync("Cannot override item because it is not the same",
                         SnackbarColor.Danger);
                 }
             }
+
+            // try
+            // {
+            //     await DataInventoryService.DeleteFromInventory(currentDragItem.StartPosition);
+            // }
+            // catch (Exception e)
+            // {
+            //     await SnackbarStack.PushAsync(
+            //         $"Error while transfer item from {currentDragItem.StartPosition} to {Index}", SnackbarColor.Danger);
+            // }
         }
     }
 
@@ -167,11 +186,46 @@ public partial class InventoryItem
     /// </summary>
     private void OnDragStart()
     {
-        Inventory.CurrentDragItem = new InventoryTransferItem
+        if (Item != null)
         {
-            Item = Item!,
-            Count = Count,
-            Position = Index
-        };
+            Inventory.CurrentDragItem = new InventoryTransferItem
+            {
+                Item = Item,
+                Count = Count,
+                Position = Index,
+                StartPosition = Index,
+                DeleteStartItem = true
+            };
+        }
+    }
+
+    private async Task OnDragEnd()
+    {
+        var currentDragItem = Inventory.CurrentDragItem;
+
+        if (currentDragItem == null
+            || (currentDragItem.StartPosition == currentDragItem.Position
+                && Index == currentDragItem.StartPosition)) return;
+
+        if (currentDragItem.DeleteStartItem)
+        {
+            try
+            {
+                // case when OnDrop was not triggered
+                await DataInventoryService.DeleteFromInventory(currentDragItem.StartPosition);
+
+                await SnackbarStack.PushAsync($"The item {Item!.DisplayName} was deleted successfully",
+                    SnackbarColor.Success);
+
+                Item = null;
+            }
+            catch (Exception e)
+            {
+                await SnackbarStack.PushAsync("Error while deleting inventory",
+                    SnackbarColor.Danger);
+            }
+        }
+
+        Inventory.CurrentDragItem = null;
     }
 }
